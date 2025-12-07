@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>QCM Électrochimie – Entraînement</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --primary: #1E88E5;
+      --primary-dark: #0D47A1;
+      --accent: #43A047;
+      --danger: #E53935;
+      --bg: #F5F7FB;
+      --card-bg: #FFFFFF;
+      --text-main: #111827;
+      --text-muted: #6B7280;
+      --border-radius: 12px;
+      --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #e3f2fd, #f5f7fb);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .app {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow-soft);
+      max-width: 900px;
+      width: 100%;
+      padding: 24px 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    @media (min-width: 768px) {
+      .app {
+        padding: 28px 32px 32px;
+      }
+    }
+
+    .app-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: rgba(30, 136, 229, 0.08);
+      color: var(--primary-dark);
+    }
+
+    .progress-bar {
+      position: relative;
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), #42a5f5);
+      border-radius: 999px;
+      transition: width 0.25s ease-out;
+    }
+
+    .question-card {
+      background: linear-gradient(135deg, #ffffff, #f3f8ff);
+      border-radius: var(--border-radius);
+      padding: 16px 18px;
+      border: 1px solid #e0e7ff;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .question-text {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin-top: 4px;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .option {
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      padding: 9px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ffffff;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.18s ease-out;
+    }
+
+    .option-prefix {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      border: 1px solid #cbd5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      background: #eef2ff;
+      flex-shrink: 0;
+    }
+
+    .option:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+      border-color: #bfdbfe;
+    }
+
+    .option.selected {
+      border-color: var(--primary);
+      background: #e3f2fd;
+    }
+
+    .option.correct {
+      border-color: var(--accent);
+      background: #e8f5e9;
+    }
+
+    .option.incorrect {
+      border-color: var(--danger);
+      background: #ffebee;
+    }
+
+    .feedback {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .feedback.correct {
+      background: #e8f5e9;
+      color: #1b5e20;
+      border: 1px solid #a5d6a7;
+    }
+
+    .feedback.incorrect {
+      background: #ffebee;
+      color: #b71c1c;
+      border: 1px solid #ef9a9a;
+    }
+
+    .feedback-icon {
+      font-size: 1rem;
+      line-height: 1;
+      margin-top: 1px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .score {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.18s ease-out;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(25, 118, 210, 0.35);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+
+    .summary {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #e5e7eb;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    .summary-highlight {
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="app-header">
+      <div class="title-block">
+        <div class="title">QCM Électrochimie</div>
+        <div class="subtitle">Cinétique, surtension, densité de courant, montages, domaine d’électroactivité</div>
+      </div>
+      <div class="pill">Mode entraînement</div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div id="quizContainer">
+      <!-- Contenu injecté en JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        text: "Le potentiel d’équilibre d’un couple redox dépend :",
+        options: [
+          "Uniquement de la température",
+          "Uniquement de la concentration en espèce oxydée",
+          "Du rapport [Ox]/[Red] selon la loi de Nernst",
+          "Ne dépend pas de la composition du milieu"
+        ],
+        correct: 2,
+        explanation:
+          "La loi de Nernst montre que E dépend du rapport a(Ox)/a(Red), donc des activités et indirectement des concentrations et de la force ionique."
+      },
+      {
+        text: "À l’équilibre électrochimique :",
+        options: [
+          "Le courant mesuré est nul mais les vitesses redox sont non nulles",
+          "Il n’y a aucun échange d’électrons à la surface",
+          "L’oxydation prédomine sur la réduction",
+          "La réduction prédomine sur l’oxydation"
+        ],
+        correct: 0,
+        explanation:
+          "À l’équilibre, v_ox = v_red, donc les flux s’annulent et le courant net est nul, mais les échanges microscopiques continuent."
+      },
+      {
+        text: "La surtension (η) correspond à :",
+        options: [
+          "E − Eeq",
+          "Eeq − E",
+          "La différence entre l’intensité anodique et cathodique",
+          "La variation du pH au voisinage de l’électrode"
+        ],
+        correct: 0,
+        explanation:
+          "Par définition, η = E − Eeq. Elle traduit l’écart entre le potentiel imposé et le potentiel d’équilibre."
+      },
+      {
+        text: "Une surtension anodique positive (η > 0) favorise :",
+        options: [
+          "La réduction",
+          "L’oxydation",
+          "La formation d’un précipité",
+          "Rien, η ne modifie pas le sens de réaction"
+        ],
+        correct: 1,
+        explanation:
+          "Une surtension positive rend l’électrode plus oxydante, ce qui favorise l’oxydation (retrait d’électrons au système)."
+      },
+      {
+        text: "La densité de courant d’échange j₀ représente :",
+        options: [
+          "Le courant global lorsqu’on impose une surtension",
+          "La vitesse d’équilibre d’un couple redox",
+          "Le courant nécessaire pour atteindre l’oxydation complète",
+          "Une grandeur purement théorique et inutile"
+        ],
+        correct: 1,
+        explanation:
+          "j₀ est la densité de courant correspondant à la vitesse d’échange au repos ; plus j₀ est grand, plus le système est cinétiquement rapide."
+      },
+      {
+        text: "Les systèmes rapides se caractérisent par :",
+        options: [
+          "Une densité de courant d’échange j₀ élevée",
+          "Une densité de courant d’échange j₀ très faible",
+          "Une forte hystérésis entre montée/descente de potentiel",
+          "Une absence d’oxydation possible"
+        ],
+        correct: 0,
+        explanation:
+          "Les systèmes rapides ont un j₀ élevé, donc une faible surtension suffit pour obtenir un courant significatif."
+      },
+      {
+        text: "Pour un système lent, on observe :",
+        options: [
+          "Oxydation et réduction simultanées",
+          "Une surtension minimale pour qu’un courant circule",
+          "Une absence totale de surtension",
+          "Un potentiel indépendant de la concentration"
+        ],
+        correct: 1,
+        explanation:
+          "Les systèmes lents nécessitent typiquement une surtension minimale anodique ou cathodique pour qu’une réaction démarre."
+      },
+      {
+        text: "Dans un système réversible (au sens électrochimique) :",
+        options: [
+          "L’interface se modifie irréversiblement",
+          "Les courbes i/E montante et descendante se superposent",
+          "Le potentiel dépend fortement du temps",
+          "La densité de courant ne peut pas être mesurée"
+        ],
+        correct: 1,
+        explanation:
+          "Un système réversible ne modifie pas durablement l’interface : la montée et la descente de potentiel donnent les mêmes courbes i/E."
+      },
+      {
+        text: "Dans un système irréversible :",
+        options: [
+          "La polarisation persiste même quand η redevient nul",
+          "Aucune oxydation n’est possible",
+          "Aucune surtension ne peut être définie",
+          "Le courant d’échange est infini"
+        ],
+        correct: 0,
+        explanation:
+          "L’interface est modifiée (oxyde, gaz…) et garde une polarisation résiduelle : c’est typique d’un comportement irréversible."
+      },
+      {
+        text: "Le système Fe³⁺/Fe²⁺ sur électrode de platine est :",
+        options: [
+          "Lent",
+          "Rapide",
+          "Toujours irréversible",
+          "Un système sans échange d’électrons"
+        ],
+        correct: 1,
+        explanation:
+          "Fe³⁺/Fe²⁺ sur Pt est l’exemple classique de système rapide avec courant d’échange élevé."
+      },
+      {
+        text: "Le couple H⁺/H₂ est :",
+        options: [
+          "Lent sur Hg et rapide sur Pt",
+          "Rapide sur Hg et lent sur Pt",
+          "Toujours lent",
+          "Toujours rapide"
+        ],
+        correct: 0,
+        explanation:
+          "H⁺/H₂ est très rapide sur Pt (très bon catalyseur) et très lent sur Hg."
+      },
+      {
+        text: "Le domaine d’électroactivité de l’eau (pH = 0) s’étend environ :",
+        options: [
+          "De −0,2 V à 1,8 V",
+          "De −2,0 V à 2,0 V",
+          "De 0 V à 1,23 V",
+          "De 1,8 V à 2,5 V"
+        ],
+        correct: 0,
+        explanation:
+          "Sur Pt à pH 0, la réduction de H⁺ commence vers −0,2 V/ECS, l’oxydation de l’eau vers +1,8 V/ECS → fenêtre ≈ 2 V."
+      },
+      {
+        text: "L’électrolyse de l’eau apparaît :",
+        options: [
+          "Lorsque E reste dans le domaine d’électroactivité",
+          "Lorsqu’on dépasse les murs du solvant",
+          "Uniquement si on utilise du mercure",
+          "Uniquement si la concentration en H⁺ est faible"
+        ],
+        correct: 1,
+        explanation:
+          "Quand on dépasse les potentiels limites, ce sont les réactions de l’eau (H₂ ou O₂) qui deviennent prédominantes."
+      },
+      {
+        text: "Dans un montage à 2 électrodes :",
+        options: [
+          "L’électrode de référence n’est traversée par aucun courant",
+          "L’électrode de référence se dégrade car un courant la traverse",
+          "Le potentiel de chaque électrode est connu séparément",
+          "On ne peut pas faire passer de courant"
+        ],
+        correct: 1,
+        explanation:
+          "Dans un vrai montage 2 électrodes, la “référence” supporte du courant et son potentiel dérive, d’où l’intérêt du montage 3 électrodes."
+      },
+      {
+        text: "Dans un montage à 3 électrodes :",
+        options: [
+          "L’électrode auxiliaire est inutile",
+          "L’électrode de référence maintient un potentiel constant sans courant",
+          "L’électrode de travail n’est pas traversée par du courant",
+          "L’électrode de référence supporte tout le courant"
+        ],
+        correct: 1,
+        explanation:
+          "L’électrode de référence ne doit quasiment pas voir de courant pour garder un potentiel stable. L’électrode auxiliaire gère la circulation du courant."
+      },
+      {
+        text: "En mode potentiostatique :",
+        options: [
+          "On impose i et on mesure E",
+          "On impose E et on mesure i",
+          "On impose uniquement η",
+          "Ni E ni i ne sont contrôlés"
+        ],
+        correct: 1,
+        explanation:
+          "Un potentiostat maintient le potentiel de l’électrode de travail ; l’intensité varie en conséquence."
+      },
+      {
+        text: "En mode galvanostatique :",
+        options: [
+          "On impose E et on mesure i",
+          "On impose i et on mesure E",
+          "On impose uniquement η",
+          "Ni E ni i ne sont contrôlés"
+        ],
+        correct: 1,
+        explanation:
+          "En galvanostatique, on impose un courant (densité de courant) et on observe comment le potentiel évolue."
+      },
+      {
+        text: "Sur la courbe i/E d’un mélange Fe²⁺/Fe³⁺ équimolaire :",
+        options: [
+          "Seule l’oxydation apparaît",
+          "Seule la réduction apparaît",
+          "Le courant total vaut 0 au potentiel d’équilibre",
+          "Oxydation et réduction sont impossibles"
+        ],
+        correct: 2,
+        explanation:
+          "À Eth, iox = −ired, donc la somme est nulle : i_total = 0, même si les flux microscopiques existent."
+      },
+      {
+        text: "Une surtension cathodique négative (η < 0) favorise :",
+        options: [
+          "L’oxydation",
+          "La réduction",
+          "La dissolution du métal",
+          "Aucune réaction"
+        ],
+        correct: 1,
+        explanation:
+          "Une surtension négative rend l’électrode plus réductrice, ce qui favorise la réduction (gain d’électrons par l’espèce en solution)."
+      },
+      {
+        text: "Lorsque l’on sort du domaine d’électroactivité de l’eau :",
+        options: [
+          "Seule la réaction d’intérêt continue",
+          "Ce sont les réactions de l’eau (H₂ ou O₂) qui dominent",
+          "La densité de courant d’échange devient nulle",
+          "La cellule ne conduit plus"
+        ],
+        correct: 1,
+        explanation:
+          "Au-delà des murs du solvant, l’eau est oxydée ou réduite en priorité, empêchant l’étude propre d’autres couples redox."
+      }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    const quizContainer = document.getElementById("quizContainer");
+    const progressFill = document.getElementById("progressFill");
+
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      answered = false;
+
+      const percent = ((currentIndex) / questions.length) * 100;
+      progressFill.style.width = `${percent}%`;
+
+      quizContainer.innerHTML = `
+        <div class="question-card">
+          <div class="question-meta">
+            <span>Question ${currentIndex + 1} / ${questions.length}</span>
+            <span>Niveau : IUT / licence</span>
+          </div>
+          <div class="question-text">${q.text}</div>
+          <div class="options">
+            ${q.options
+              .map(
+                (opt, i) => `
+              <button class="option" data-index="${i}">
+                <span class="option-prefix">${String.fromCharCode(65 + i)}</span>
+                <span>${opt}</span>
+              </button>
+            `
+              )
+              .join("")}
+          </div>
+          <div id="feedback"></div>
+          <div class="controls">
+            <div class="score">
+              Score actuel : <strong>${score}</strong> / ${questions.length}
+            </div>
+            <div>
+              <button class="btn-secondary" id="resetBtn">Réinitialiser</button>
+              <button class="btn-primary" id="nextBtn">
+                ${currentIndex === questions.length - 1 ? "Voir le bilan" : "Question suivante"}
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.querySelectorAll(".option").forEach((btn) => {
+        btn.addEventListener("click", onOptionClick);
+      });
+
+      document.getElementById("nextBtn").addEventListener("click", onNext);
+      document.getElementById("resetBtn").addEventListener("click", onReset);
+    }
+
+    function onOptionClick(e) {
+      if (answered) return;
+      const btn = e.currentTarget;
+      const selectedIndex = parseInt(btn.getAttribute("data-index"));
+      const q = questions[currentIndex];
+      const feedbackDiv = document.getElementById("feedback");
+      const optionButtons = document.querySelectorAll(".option");
+
+      answered = true;
+
+      optionButtons.forEach((b) => b.classList.remove("selected", "correct", "incorrect"));
+      btn.classList.add("selected");
+
+      if (selectedIndex === q.correct) {
+        score++;
+        btn.classList.add("correct");
+        feedbackDiv.innerHTML = `
+          <div class="feedback correct">
+            <div class="feedback-icon">✔</div>
+            <div>
+              <strong>Correct !</strong><br/>
+              ${q.explanation}
+            </div>
+          </div>
+        `;
+      } else {
+        btn.classList.add("incorrect");
+        optionButtons[q.correct].classList.add("correct");
+        feedbackDiv.innerHTML = `
+          <div class="feedback incorrect">
+            <div class="feedback-icon">✖</div>
+            <div>
+              <strong>Incorrect.</strong><br/>
+              ${q.explanation}
+            </div>
+          </div>
+        `;
+      }
+
+      // Mise à jour du score affiché
+      document.querySelector(".score").innerHTML =
+        'Score actuel : <strong>' + score + "</strong> / " + questions.length;
+    }
+
+    function onNext() {
+      if (!answered && currentIndex < questions.length) {
+        // Optionnel : obliger à répondre avant de continuer
+        alert("Réponds d’abord à la question 🙂");
+        return;
+      }
+
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      } else {
+        showSummary();
+      }
+    }
+
+    function onReset() {
+      if (!confirm("Réinitialiser le QCM et recommencer depuis le début ?")) return;
+      currentIndex = 0;
+      score = 0;
+      renderQuestion();
+    }
+
+    function showSummary() {
+      progressFill.style.width = "100%";
+      const percent = Math.round((score / questions.length) * 100);
+
+      let appreciation = "Bon début, revois les notions clés.";
+      if (percent >= 80) appreciation = "Excellent, tu maîtrises très bien le chapitre ✅";
+      else if (percent >= 60) appreciation = "Pas mal, quelques points à consolider 💪";
+      else if (percent >= 40) appreciation = "Encore du travail, mais tu es sur la bonne voie 📚";
+
+      quizContainer.innerHTML = `
+        <div class="question-card">
+          <div class="question-text">Bilan de ton QCM</div>
+          <div class="summary">
+            Score final : <span class="summary-highlight">${score} / ${
+        questions.length
+      }</span> (${percent} %)<br/>
+            ${appreciation}
+          </div>
+          <div class="controls" style="margin-top:16px;">
+            <div class="score">Tu peux recommencer pour t’améliorer.</div>
+            <button class="btn-primary" id="restartBtn">Recommencer le QCM</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("restartBtn").addEventListener("click", () => {
+        currentIndex = 0;
+        score = 0;
+        renderQuestion();
+      });
+    }
+
+    // Initialisation
+    renderQuestion();
+  </script>
+</body>
+</html>
