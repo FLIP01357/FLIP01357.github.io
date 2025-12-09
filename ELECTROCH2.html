@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>QCM Électrochimie – Cours complet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --accent: #16a34a;
+      --danger: #dc2626;
+      --bg: #f3f4f6;
+      --card-bg: #ffffff;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --radius: 14px;
+      --shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #dbeafe, #f3f4f6);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      color: var(--text-main);
+    }
+    .app {
+      background: var(--card-bg);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      max-width: 900px;
+      width: 100%;
+      padding: 24px 22px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    @media (min-width: 768px) {
+      .app { padding: 28px 32px 32px; }
+    }
+    .app-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .title-block { display: flex; flex-direction: column; gap: 4px; }
+    .title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(37, 99, 235, 0.08);
+      color: var(--primary-dark);
+    }
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2563eb, #38bdf8);
+      border-radius: 999px;
+      transition: width 0.25s ease-out;
+    }
+    .question-card {
+      background: linear-gradient(135deg, #ffffff, #eff6ff);
+      border-radius: var(--radius);
+      border: 1px solid #e0e7ff;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .question-text {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin-top: 2px;
+    }
+    .options {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .option {
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      padding: 9px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ffffff;
+      font-size: 0.94rem;
+      cursor: pointer;
+      transition: all 0.18s ease-out;
+    }
+    .option-prefix {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      border: 1px solid #c7d2fe;
+      background: #e0e7ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      flex-shrink: 0;
+    }
+    .option:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+      border-color: #bfdbfe;
+    }
+    .option.selected { border-color: var(--primary); background: #dbeafe; }
+    .option.correct { border-color: var(--accent); background: #dcfce7; }
+    .option.incorrect { border-color: var(--danger); background: #fee2e2; }
+    .feedback {
+      margin-top: 8px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .feedback.correct {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+    .feedback.incorrect {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+    .feedback-icon { font-size: 1rem; margin-top: 1px; }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .score {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.18s ease-out;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+    }
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+    .btn-secondary:hover { background: #d1d5db; }
+    .summary {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #e5e7eb;
+      font-size: 0.92rem;
+      color: var(--text-main);
+    }
+    .summary-highlight {
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="app-header">
+      <div class="title-block">
+        <div class="title">QCM – Électrochimie (cours complet)</div>
+        <div class="subtitle">
+          Potentiel, surtension, cinétique, transfert de masse, polarographie, voltampérométrie
+        </div>
+      </div>
+      <div class="pill">Mode entraînement</div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div id="quizContainer"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        text: "Le potentiel d’équilibre d’un couple redox Ox/Red dépend :",
+        options: [
+          "Uniquement de la température",
+          "Uniquement de la concentration en espèce oxydée",
+          "Du rapport des activités a(Ox)/a(Red) via l’équation de Nernst",
+          "Uniquement de la nature de l’électrode métallique"
+        ],
+        correct: 2,
+        explanation:
+          "L’équation de Nernst relie le potentiel E au potentiel standard E° et au rapport a(Ox)/a(Red)."
+      },
+      {
+        text: "La surtension (η) à une électrode est définie par :",
+        options: [
+          "η = Eeq − E",
+          "η = E − Eeq",
+          "η = i − i0",
+          "η = ΔpH au voisinage de l’électrode"
+        ],
+        correct: 1,
+        explanation:
+          "Par définition, η = E − Eeq : c’est l’écart entre le potentiel imposé et le potentiel d’équilibre."
+      },
+      {
+        text: "Une surtension anodique positive (η > 0) a pour effet de :",
+        options: [
+          "Favoriser la réduction",
+          "Favoriser l’oxydation",
+          "Empêcher toute réaction faradique",
+          "Ne rien changer au sens de la réaction"
+        ],
+        correct: 1,
+        explanation:
+          "Une surtension positive rend l’électrode plus oxydante et favorise l’oxydation de l’espèce en solution."
+      },
+      {
+        text: "La densité de courant d’échange j0 caractérise :",
+        options: [
+          "Le courant mesuré à très forte surtension",
+          "La vitesse d’équilibre de la réaction redox à Eeq",
+          "Le courant limite de diffusion",
+          "Le courant capacitif de double couche"
+        ],
+        correct: 1,
+        explanation:
+          "j0 est la densité de courant associée à la réaction d’échange à l’équilibre (flux anodique = flux cathodique)."
+      },
+      {
+        text: "Un système électrochimique dit \"rapide\" se caractérise par :",
+        options: [
+          "Un j0 élevé et de faibles surtensions nécessaires",
+          "Un j0 très faible et des surtensions élevées",
+          "Une absence de transfert d’électrons",
+          "Un comportement toujours irréversible"
+        ],
+        correct: 0,
+        explanation:
+          "Plus j0 est grand, plus la cinétique est rapide : on obtient des courants importants pour des surtensions modestes."
+      },
+      {
+        text: "Dans un système lent, on observe typiquement :",
+        options: [
+          "Oxydation et réduction simultanées aux mêmes potentiels",
+          "Une surtension minimale anodique ou cathodique pour faire circuler un courant",
+          "L’absence de toute surtension",
+          "Des courants indépendants du potentiel appliqué"
+        ],
+        correct: 1,
+        explanation:
+          "Les systèmes lents demandent une surtension minimale (ηma ou ηmc) pour que la réaction de transfert de charge démarre."
+      },
+      {
+        text: "Dans un système électrochimique réversible (au sens du cours) :",
+        options: [
+          "L’interface électrode/solution est modifiée de façon irréversible",
+          "Les courbes i(E) montée et descente se superposent",
+          "Le courant ne dépend pas du potentiel",
+          "La densité de courant d’échange est nulle"
+        ],
+        correct: 1,
+        explanation:
+          "Pour un système réversible, aucune modification durable de surface : le cycle montée/descente donne les mêmes courbes i(E)."
+      },
+      {
+        text: "Le domaine d’électroactivité de l’eau (pH ≈ 0) sur une électrode inerte est approximativement :",
+        options: [
+          "De −0,2 V à +1,8 V/ECS",
+          "De 0 V à +0,5 V/ECS",
+          "De −2 V à +2 V/ECS",
+          "De −1,23 V à +1,23 V/ECS"
+        ],
+        correct: 0,
+        explanation:
+          "Le cours indique une réduction de H⁺ vers −0,2 V/ECS et l’oxydation de l’eau vers +1,8 V/ECS, soit ~2 V de fenêtre."
+      },
+      {
+        text: "Dans un montage à trois électrodes, le rôle principal de l’électrode de référence est :",
+        options: [
+          "Assurer la circulation du courant",
+          "Maintenir un potentiel connu et quasi constant sans laisser passer de courant",
+          "Distribuer la tension du potentiostat",
+          "Augmenter la surface de réaction"
+        ],
+        correct: 1,
+        explanation:
+          "L’électrode de référence sert à mesurer et fixer précisément le potentiel de l’électrode de travail tout en restant non polarisée."
+      },
+      {
+        text: "En mode potentiostatique :",
+        options: [
+          "On impose le courant et on mesure le potentiel",
+          "On impose le potentiel de l’électrode de travail et on mesure le courant",
+          "On impose la surtension uniquement",
+          "Aucun paramètre n’est contrôlé"
+        ],
+        correct: 1,
+        explanation:
+          "Un potentiostat maintient le potentiel (par rapport à la référence) et enregistre le courant résultant."
+      },
+      {
+        text: "Une réaction électrochimique simple est décrite comme :",
+        options: [
+          "Une seule étape de transfert de charge",
+          "Une succession d’étapes de transfert de masse et de charge",
+          "Une réaction homogène sans interface",
+          "Une réaction ne dépendant que de la diffusion"
+        ],
+        correct: 1,
+        explanation:
+          "Le cours distingue : transfert de masse vers l’électrode, transfert de charge (échange d’électrons), puis transfert de masse des produits."
+      },
+      {
+        text: "L’étape cinétiquement déterminante d’une réaction électrochimique est :",
+        options: [
+          "L’étape la plus rapide",
+          "L’étape la plus lente qui contrôle la vitesse globale",
+          "Toujours le transfert de charge",
+          "Toujours la diffusion dans le volume"
+        ],
+        correct: 1,
+        explanation:
+          "Comme en cinétique chimique, la vitesse globale est gouvernée par l’étape la plus lente (étape limite)."
+      },
+      {
+        text: "La loi de Tafel relie :",
+        options: [
+          "log|i| à la concentration en réactif",
+          "log|i| à la surtension η",
+          "E à la racine du courant",
+          "i à la résistance de solution"
+        ],
+        correct: 1,
+        explanation:
+          "Pour un contrôle par transfert de charge : log|i| = a + βη, avec a = log|i0| et β un coefficient de pente de Tafel."
+      },
+      {
+        text: "Dans la loi de Tafel log|i| = a + βη, la constante a correspond à :",
+        options: [
+          "log|ilim|",
+          "log|i0|, le courant d’échange",
+          "log|icorr|",
+          "0 pour tous les systèmes"
+        ],
+        correct: 1,
+        explanation:
+          "Le cours donne a = log|i0|, où i0 est le courant d’échange du système."
+      },
+      {
+        text: "Les trois modes de transfert de masse mentionnés dans le cours sont :",
+        options: [
+          "Convection, conduction, évaporation",
+          "Migration, convection, diffusion",
+          "Diffusion, adsorption, désorption",
+          "Migration, convection, frottement visqueux"
+        ],
+        correct: 1,
+        explanation:
+          "Le flux de matière vers l’électrode peut se faire par migration (champ électrique), convection (mouvements de solution) et diffusion (gradient de concentration)."
+      },
+      {
+        text: "Dans le régime de diffusion stationnaire contrôlé par convection stable, la couche de diffusion :",
+        options: [
+          "Disparaît totalement",
+          "A une épaisseur constante δ et un profil de concentration linéaire",
+          "Est infinie et sans gradient",
+          "Ne contient que l’électrolyte support"
+        ],
+        correct: 1,
+        explanation:
+          "En régime stationnaire, la couche de diffusion a une épaisseur δ constante et le gradient de concentration y est approximativement linéaire."
+      },
+      {
+        text: "L’équation de Nernst–Planck décompose le flux Jréactif en contributions dues :",
+        options: [
+          "À la convection seule",
+          "À la migration, à la diffusion et à la convection",
+          "À la conduction électrique seulement",
+          "À la seule adsorption de surface"
+        ],
+        correct: 1,
+        explanation:
+          "Jréactif = Jréactif(M) + Jréactif(D) + Jréactif(C) : migration, diffusion, convection."
+      },
+      {
+        text: "Selon la première loi de Fick, le flux diffusif JOx vers l’électrode est proportionnel :",
+        options: [
+          "Au potentiel de l’électrode",
+          "Au courant limite",
+          "Au gradient de concentration d[Ox]/dd",
+          "Au pH de la solution"
+        ],
+        correct: 2,
+        explanation:
+          "JOx = −DOx · d[Ox]/dd : le flux est proportionnel au gradient de concentration dans la couche de diffusion."
+      },
+      {
+        text: "Le courant limite de diffusion ilim est atteint lorsque :",
+        options: [
+          "Le transfert de charge est beaucoup plus rapide que le transfert de masse",
+          "La concentration en réactif à l’électrode [Ox]el reste égale à [Ox]sol",
+          "La migration devient dominante",
+          "La tension de cellule est nulle"
+        ],
+        correct: 0,
+        explanation:
+          "À ilim, la vitesse de disparition du réactif à la surface est limitée par son arrivée (diffusion) ; on a [Ox]el ≈ 0, d’où ilim ∝ [Ox]sol."
+      },
+      {
+        text: "En régime de diffusion stationnaire, les courants limites anodiques et cathodiques sont :",
+        options: [
+          "Indépendants de la concentration en substance électroactive",
+          "Proportionnels à la concentration en espèces électroactives",
+          "Nuls pour les systèmes réversibles",
+          "Toujours égaux à j0"
+        ],
+        correct: 1,
+        explanation:
+          "Le cours donne ilim c/S = −KOx[Ox]sol et ilim a/S = KRed[Red]sol : ils sont proportionnels à la concentration en réactif."
+      },
+      {
+        text: "La polarographie (électrode à goutte de mercure) exploite :",
+        options: [
+          "Une mesure de courant limite proportionnel à la vitesse de goutte",
+          "La relation entre courant limite de diffusion et concentration",
+          "Uniquement la migration des ions",
+          "Un courant capacitif sans réaction faradique"
+        ],
+        correct: 1,
+        explanation:
+          "Le polarogramme présente un palier de courant limite i_lim proportionnel à la concentration de l’espèce électroactive."
+      },
+      {
+        text: "En voltampérométrie à balayage linéaire sans convection (diffusion naturelle) :",
+        options: [
+          "On observe des paliers de courant limite constants",
+          "On obtient des pics de courant (maximum puis décroissance)",
+          "Le courant est nul quel que soit le potentiel",
+          "Le courant reste constant pendant tout le balayage"
+        ],
+        correct: 1,
+        explanation:
+          "Sans convection, la diffusion s’épuise : le courant augmente au début puis décroît, ce qui donne un pic plutôt qu’un plateau."
+      },
+      {
+        text: "En voltampérométrie cyclique, pour un système réversible rapide :",
+        options: [
+          "On n’observe qu’un seul pic",
+          "Le pic aller est anodique et le retour identique",
+          "On observe un pic à l’aller et un pic de signe opposé au retour",
+          "Le courant ne dépend pas de la vitesse de balayage"
+        ],
+        correct: 2,
+        explanation:
+          "Le balayage aller modifie la composition dans la couche de diffusion (par ex. Red → Ox) ; le balayage retour rapide peut inverser la réaction (Ox → Red), donnant un pic de signe opposé."
+      },
+      {
+        text: "Pour un système rapide en voltampérométrie cyclique, la séparation de pics ΔEp vaut approximativement :",
+        options: [
+          "0 mV",
+          "56/n mV",
+          "118/n mV",
+          "1,23 V"
+        ],
+        correct: 1,
+        explanation:
+          "Le cours indique : système rapide → ΔEp ≈ 56/n mV, avec n le nombre d’électrons échangés."
+      }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    const quizContainer = document.getElementById("quizContainer");
+    const progressFill = document.getElementById("progressFill");
+
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      answered = false;
+
+      const percent = (currentIndex / questions.length) * 100;
+      progressFill.style.width = percent + "%";
+
+      quizContainer.innerHTML = `
+        <div class="question-card">
+          <div class="question-meta">
+            <span>Question ${currentIndex + 1} / ${questions.length}</span>
+            <span>Niveau : BUT / Licence</span>
+          </div>
+          <div class="question-text">${q.text}</div>
+          <div class="options">
+            ${q.options
+              .map(
+                (opt, i) => `
+              <button class="option" data-index="${i}">
+                <span class="option-prefix">${String.fromCharCode(65 + i)}</span>
+                <span>${opt}</span>
+              </button>
+            `
+              )
+              .join("")}
+          </div>
+          <div id="feedback"></div>
+          <div class="controls">
+            <div class="score">
+              Score actuel : <strong>${score}</strong> / ${questions.length}
+            </div>
+            <div>
+              <button class="btn-secondary" id="resetBtn">Réinitialiser</button>
+              <button class="btn-primary" id="nextBtn">
+                ${currentIndex === questions.length - 1 ? "Voir le bilan" : "Question suivante"}
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.querySelectorAll(".option").forEach((btn) => {
+        btn.addEventListener("click", onOptionClick);
+      });
+      document.getElementById("nextBtn").addEventListener("click", onNext);
+      document.getElementById("resetBtn").addEventListener("click", onReset);
+    }
+
+    function onOptionClick(e) {
+      if (answered) return;
+      const btn = e.currentTarget;
+      const selectedIndex = parseInt(btn.getAttribute("data-index"), 10);
+      const q = questions[currentIndex];
+      const feedbackDiv = document.getElementById("feedback");
+      const optionButtons = document.querySelectorAll(".option");
+
+      answered = true;
+
+      optionButtons.forEach((b) => b.classList.remove("selected", "correct", "incorrect"));
+      btn.classList.add("selected");
+
+      if (selectedIndex === q.correct) {
+        score++;
+        btn.classList.add("correct");
+        feedbackDiv.innerHTML = `
+          <div class="feedback correct">
+            <div class="feedback-icon">✔</div>
+            <div>
+              <strong>Correct !</strong><br/>
+              ${q.explanation}
+            </div>
+          </div>
+        `;
+      } else {
+        btn.classList.add("incorrect");
+        optionButtons[q.correct].classList.add("correct");
+        feedbackDiv.innerHTML = `
+          <div class="feedback incorrect">
+            <div class="feedback-icon">✖</div>
+            <div>
+              <strong>Incorrect.</strong><br/>
+              ${q.explanation}
+            </div>
+          </div>
+        `;
+      }
+
+      document.querySelector(".score").innerHTML =
+        'Score actuel : <strong>' + score + "</strong> / " + questions.length;
+    }
+
+    function onNext() {
+      if (!answered && currentIndex < questions.length) {
+        alert("Réponds d’abord à la question 🙂");
+        return;
+      }
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      } else {
+        showSummary();
+      }
+    }
+
+    function onReset() {
+      if (!confirm("Réinitialiser le QCM et recommencer depuis le début ?")) return;
+      currentIndex = 0;
+      score = 0;
+      renderQuestion();
+    }
+
+    function showSummary() {
+      progressFill.style.width = "100%";
+      const percent = Math.round((score / questions.length) * 100);
+      let appreciation = "Bon début, revois quelques notions clés.";
+      if (percent >= 80) appreciation = "Excellent, tu maîtrises très bien le chapitre ✅";
+      else if (percent >= 60) appreciation = "Correct, mais il reste des points à consolider 💪";
+      else if (percent >= 40) appreciation = "Encore du travail, mais tu progresses 📚";
+
+      quizContainer.innerHTML = `
+        <div class="question-card">
+          <div class="question-text">Bilan de ton QCM – Électrochimie</div>
+          <div class="summary">
+            Score final : <span class="summary-highlight">${score} / ${questions.length}</span>
+            (${percent} %)<br/>
+            ${appreciation}
+          </div>
+          <div class="controls" style="margin-top:16px;">
+            <div class="score">Tu peux recommencer pour t’améliorer.</div>
+            <button class="btn-primary" id="restartBtn">Recommencer le QCM</button>
+          </div>
+        </div>
+      `;
+      document.getElementById("restartBtn").addEventListener("click", () => {
+        currentIndex = 0;
+        score = 0;
+        renderQuestion();
+      });
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>
