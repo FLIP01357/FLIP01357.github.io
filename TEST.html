@@ -1,0 +1,630 @@
+<!-- CODE HTML DU QCM INTERACTIF - CHIMIE MINÉRALE (Miné1) -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>QCM Chimie Minérale – Miné1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --accent: #16a34a;
+      --danger: #dc2626;
+      --bg: #f3f4f6;
+      --card-bg: #ffffff;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --radius: 14px;
+      --shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #dbeafe, #f3f4f6);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      color: var(--text-main);
+    }
+    .app {
+      background: var(--card-bg);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      max-width: 900px;
+      width: 100%;
+      padding: 24px 22px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    @media (min-width: 768px) {
+      .app { padding: 28px 32px 32px; }
+    }
+    .app-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .title-block { display: flex; flex-direction: column; gap: 4px; }
+    .title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(37, 99, 235, 0.08);
+      color: var(--primary-dark);
+    }
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2563eb, #38bdf8);
+      border-radius: 999px;
+      transition: width 0.25s ease-out;
+    }
+    .question-card {
+      background: linear-gradient(135deg, #ffffff, #eff6ff);
+      border-radius: var(--radius);
+      border: 1px solid #e0e7ff;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .question-text {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin-top: 2px;
+    }
+    .options {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .option {
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      padding: 9px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ffffff;
+      font-size: 0.94rem;
+      cursor: pointer;
+      transition: all 0.18s ease-out;
+    }
+    .option-prefix {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      border: 1px solid #c7d2fe;
+      background: #e0e7ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      flex-shrink: 0;
+    }
+    .option:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+      border-color: #bfdbfe;
+    }
+    .option.selected { border-color: var(--primary); background: #dbeafe; }
+    .option.correct { border-color: var(--accent); background: #dcfce7; }
+    .option.incorrect { border-color: var(--danger); background: #fee2e2; }
+    .feedback {
+      margin-top: 8px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .feedback.correct {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+    .feedback.incorrect {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+    .feedback-icon { font-size: 1rem; margin-top: 1px; }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .score {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.18s ease-out;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+    }
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+    .btn-secondary:hover { background: #d1d5db; }
+    .summary {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #e5e7eb;
+      font-size: 0.92rem;
+      color: var(--text-main);
+    }
+    .summary-highlight {
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="app-header">
+      <div class="title-block">
+        <div class="title">QCM – Chimie Minérale (Miné1)</div>
+        <div class="subtitle">Familles de composés minéraux, synthèses, propriétés, solubilité</div>
+      </div>
+      <div class="pill">Mode entraînement</div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div id="quizContainer"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        text: "La chimie minérale est définie comme :",
+        options: [
+          "La chimie des composés organiques du carbone",
+          "La chimie des métaux uniquement",
+          "La chimie de tous les éléments et de leurs composés",
+          "La chimie de l’eau et des solutions aqueuses uniquement"
+        ],
+        correct: 2,
+        explanation:
+          "Le cours définit la chimie minérale comme la chimie de tous les éléments et des composés qu’ils forment."
+      },
+      {
+        text: "Dans la nomenclature des composés ioniques, l’ordre d’écriture est :",
+        options: [
+          "Cation puis anion",
+          "Anion puis cation",
+          "Métal puis non-métal dans l’ordre alphabétique",
+          "Anion oxygéné puis anion simple"
+        ],
+        correct: 1,
+        explanation:
+          "Les composés ioniques sont nommés d’après les ions qui les composent : anion + cation (ex : chlorure de sodium)."
+      },
+      {
+        text: "Quel suffixe est typiquement utilisé pour un anion monoatomique comme F⁻ ou Cl⁻ ?",
+        options: [
+          "-ate",
+          "-ite",
+          "-ure",
+          "-yde"
+        ],
+        correct: 2,
+        explanation:
+          "Les anions monoatomiques prennent généralement la terminaison -ure (fluorure, chlorure, sulfure…)."
+      },
+      {
+        text: "Parmi les propositions suivantes, lequel est un oxyanion ?",
+        options: [
+          "CN⁻",
+          "OH⁻",
+          "NO₃⁻",
+          "H⁻"
+        ],
+        correct: 2,
+        explanation:
+          "NO₃⁻ est un oxyanion (anion contenant de l’oxygène), appelé nitrate."
+      },
+      {
+        text: "Les hydrures des métaux alcalins sont généralement :",
+        options: [
+          "Covalents et très volatils",
+          "Ionique et fortement réducteurs",
+          "Neutres et très solubles dans l’eau",
+          "Inertes chimiquement"
+        ],
+        correct: 1,
+        explanation:
+          "Les éléments très électropositifs forment des hydrures ioniques, qui sont en général très réducteurs."
+      },
+      {
+        text: "Quelle réaction illustre la préparation d’un hydrogénocarbonate alcalin ?",
+        options: [
+          "Na₂CO₃ + NiCl₂ → 2 NaCl + NiCO₃",
+          "NaOH + CO₂ → NaHCO₃",
+          "CuCO₃ + H₂SO₄ + 4 H₂O → CuSO₄·5H₂O + CO₂",
+          "Fe + S → FeS"
+        ],
+        correct: 1,
+        explanation:
+          "L’action de CO₂ sur une base (NaOH) donne un hydrogénocarbonate : NaHCO₃."
+      },
+      {
+        text: "Les carbonates neutres (sauf Na⁺, K⁺, Rb⁺, Cs⁺, NH₄⁺) sont en général :",
+        options: [
+          "Très solubles dans l’eau",
+          "Insolubles dans l’eau",
+          "Gazeux à température ambiante",
+          "Des oxydants puissants"
+        ],
+        correct: 1,
+        explanation:
+          "Le cours indique que les carbonates neutres sont tous insolubles, sauf ceux des alcalins et de l’ammonium."
+      },
+      {
+        text: "Les nitrates métalliques sont en général :",
+        options: [
+          "Insolubles et très stables thermiquement",
+          "Solubles et instables thermiquement",
+          "Gazeux et inertes",
+          "Liquides non polaires"
+        ],
+        correct: 1,
+        explanation:
+          "Les nitrates sont solubles dans l’eau et instables à la chaleur (décomposition avec dégagement de NO₂, O₂...)."
+      },
+      {
+        text: "Quelle affirmation est correcte à propos de NH₄NO₃ ?",
+        options: [
+          "C’est un carbonate neutre insoluble",
+          "C’est un sulfate très stable",
+          "C’est un nitrate explosif à la décomposition",
+          "C’est un chlorure très peu soluble"
+        ],
+        correct: 2,
+        explanation:
+          "Le cours mentionne la décomposition explosive de NH₄NO₃ : N₂ + 2 H₂O + 1/2 O₂."
+      },
+      {
+        text: "Les sulfates des métaux alcalins et alcalino-terreux sont décrits comme :",
+        options: [
+          "Solubles et stables thermiquement",
+          "Insolubles et très instables thermiquement",
+          "Toujours complexes en solution",
+          "Volatils et gazeux"
+        ],
+        correct: 0,
+        explanation:
+          "Les sulfates alcalins et alcalino-terreux sont indiqués comme stables thermiquement, et beaucoup sont solubles."
+      },
+      {
+        text: "Une voie générale de synthèse d’un chlorure métallique est :",
+        options: [
+          "Action de CO₂ sur le métal",
+          "Réaction du métal avec Cl₂",
+          "Grillage du sulfate en atmosphère oxydante",
+          "Action de NH₃ sur le métal"
+        ],
+        correct: 1,
+        explanation:
+          "Le cours donne : Fe + 3/2 Cl₂ → FeCl₃, Mo + 5/2 Cl₂ → MoCl₅, etc."
+      },
+      {
+        text: "La méthode d’Oersted permet de synthétiser un chlorure MCl₂ à partir de :",
+        options: [
+          "M + HCl",
+          "MO + C + Cl₂",
+          "MCO₃ + H₂O",
+          "M + H₂"
+        ],
+        correct: 1,
+        explanation:
+          "Méthode d’Oersted: MO + C + Cl₂ → MCl₂ + CO."
+      },
+      {
+        text: "Parmi ces structures cristallines, laquelle correspond à NaCl ?",
+        options: [
+          "Coordination 8/8 (type CsCl)",
+          "Coordination 6/6 (type NaCl)",
+          "Coordination 4/4 (type wurtzite)",
+          "Coordination 2/2 (linéaire)"
+        ],
+        correct: 1,
+        explanation:
+          "Le cours mentionne les structures : CsCl (8/8), NaCl (6/6), fluorite (8/4), rutile (6/3)."
+      },
+      {
+        text: "Les fluorures sont décrits comme :",
+        options: [
+          "Très solubles et toujours inertes",
+          "Modérément solubles, souvent utilisés comme fondants",
+          "Toujours gazeux",
+          "Insolubles et neutres"
+        ],
+        correct: 1,
+        explanation:
+          "Le cours indique que les fluorures sont modérément solubles et utilisés comme fondants."
+      },
+      {
+        text: "L’acide fluorhydrique (HF) est particulièrement dangereux car :",
+        options: [
+          "Il est totalement inerte sur la silice",
+          "Il est très toxique et attaque la silice (SiO₂)",
+          "C’est une base forte",
+          "Il ne réagit qu’avec les gaz rares"
+        ],
+        correct: 1,
+        explanation:
+          "HF est très toxique et très réactif vis-à-vis de la silice, ce qui justifie l’usage de récipients plastiques."
+      },
+      {
+        text: "Les sulfures métalliques MxSy possèdent en général :",
+        options: [
+          "Un éclat métallique et sont souvent peu solubles",
+          "Un caractère très ionique et une grande solubilité",
+          "Une structure gazeuse",
+          "Aucune réactivité vis-à-vis des acides"
+        ],
+        correct: 0,
+        explanation:
+          "Le cours précise que les sulfures métalliques ont souvent un éclat métallique, un caractère covalent et sont peu solubles."
+      },
+      {
+        text: "Quelle réaction illustre la préparation d’un sulfure par précipitation ?",
+        options: [
+          "Fe + S → FeS",
+          "Na₂CO₃ + NiCl₂ → 2 NaCl + NiCO₃",
+          "Pb(NO₃)₂ + H₂S → PbS + 2 HNO₃",
+          "NiCO₃ → NiO + CO₂"
+        ],
+        correct: 2,
+        explanation:
+          "La réaction Pb(NO₃)₂ + H₂S → PbS + 2 HNO₃ illustre la formation de sulfure par réaction avec H₂S."
+      },
+      {
+        text: "Le grillage d’un sulfure comme ZnS en atmosphère oxydante conduit typiquement à :",
+        options: [
+          "Un carbonate neutre",
+          "Un chlorure métallique",
+          "Un oxyde métallique et un gaz soufré",
+          "Un nitrate métallique"
+        ],
+        correct: 2,
+        explanation:
+          "Le cours donne : 2 ZnS + 3 O₂ → 2 ZnO + 2 SO₂ (grillage)."
+      },
+      {
+        text: "Parmi ces affirmations, laquelle est correcte sur les oxydes ?",
+        options: [
+          "Tous les oxydes sont acides",
+          "Tous les oxydes sont basiques",
+          "Il existe des oxydes acides, basiques, amphotères et neutres",
+          "Les oxydes n’interviennent pas dans les réactions en solution"
+        ],
+        correct: 2,
+        explanation:
+          "Les oxydes sont classés en oxydes acides, basiques, amphotères, neutres, ainsi que peroxydes/superoxydes."
+      },
+      {
+        text: "Les hydrogénocarbonates alcalins et alcalino-terreux sont décrits comme :",
+        options: [
+          "Tous insolubles dans l’eau",
+          "Tous solubles dans l’eau",
+          "Toujours gazeux",
+          "Thermiquement très stables"
+        ],
+        correct: 1,
+        explanation:
+          "Le cours indique que les hydrogénocarbonates de métaux alcalins et alcalino-terreux sont tous solubles."
+      }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    const quizContainer = document.getElementById("quizContainer");
+    const progressFill = document.getElementById("progressFill");
+
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      answered = false;
+
+      const percent = (currentIndex / questions.length) * 100;
+      progressFill.style.width = percent + "%";
+
+      quizContainer.innerHTML = `
+        <div class="question-card">
+          <div class="question-meta">
+            <span>Question ${currentIndex + 1} / ${questions.length}</span>
+            <span>Niveau : BUT / Licence</span>
+          </div>
+          <div class="question-text">${q.text}</div>
+          <div class="options">
+            ${q.options
+              .map(
+                (opt, i) => `
+              <button class="option" data-index="${i}">
+                <span class="option-prefix">${String.fromCharCode(65 + i)}</span>
+                <span>${opt}</span>
+              </button>
+            `
+              )
+              .join("")}
+          </div>
+          <div id="feedback"></div>
+          <div class="controls">
+            <div class="score">
+              Score actuel : <strong>${score}</strong> / ${questions.length}
+            </div>
+            <div>
+              <button class="btn-secondary" id="resetBtn">Réinitialiser</button>
+              <button class="btn-primary" id="nextBtn">
+                ${currentIndex === questions.length - 1 ? "Voir le bilan" : "Question suivante"}
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.querySelectorAll(".option").forEach((btn) => {
+        btn.addEventListener("click", onOptionClick);
+      });
+      document.getElementById("nextBtn").addEventListener("click", onNext);
+      document.getElementById("resetBtn").addEventListener("click", onReset);
+    }
+
+    function onOptionClick(e) {
+      if (answered) return;
+      const btn = e.currentTarget;
+      const selectedIndex = parseInt(btn.getAttribute("data-index"), 10);
+      const q = questions[currentIndex];
+      const feedbackDiv = document.getElementById("feedback");
+      const optionButtons = document.querySelectorAll(".option");
+
+      answered = true;
+
+      optionButtons.forEach((b) => b.classList.remove("selected", "correct", "incorrect"));
+      btn.classList.add("selected");
+
+      if (selectedIndex === q.correct) {
+        score++;
+        btn.classList.add("correct");
+        feedbackDiv.innerHTML = `
+          <div class="feedback correct">
+            <div class="feedback-icon">✔</div>
+            <div>
+              <strong>Correct !</strong><br/>
+              ${q.explanation}
+            </div>
+          </div>
+        `;
+      } else {
+        btn.classList.add("incorrect");
+        optionButtons[q.correct].classList.add("correct");
+        feedbackDiv.innerHTML = `
+          <div class="feedback incorrect">
+            <div class="feedback-icon">✖</div>
+            <div>
+              <strong>Incorrect.</strong><br/>
+              ${q.explanation}
+            </div>
+          </div>
+        `;
+      }
+
+      document.querySelector(".score").innerHTML =
+        'Score actuel : <strong>' + score + "</strong> / " + questions.length;
+    }
+
+    function onNext() {
+      if (!answered && currentIndex < questions.length) {
+        alert("Réponds d’abord à la question 🙂");
+        return;
+      }
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      } else {
+        showSummary();
+      }
+    }
+
+    function onReset() {
+      if (!confirm("Réinitialiser le QCM et recommencer depuis le début ?")) return;
+      currentIndex = 0;
+      score = 0;
+      renderQuestion();
+    }
+
+    function showSummary() {
+      progressFill.style.width = "100%";
+      const percent = Math.round((score / questions.length) * 100);
+      let appreciation = "Bon début, revois quelques points clés.";
+      if (percent >= 80) appreciation = "Excellent, tu maîtrises très bien ce chapitre ✅";
+      else if (percent >= 60) appreciation = "Correct, mais il reste des points à consolider 💪";
+      else if (percent >= 40) appreciation = "Encore du travail, mais tu progresses 📚";
+
+      quizContainer.innerHTML = `
+        <div class="question-card">
+          <div class="question-text">Bilan de ton QCM – Chimie Minérale (Miné1)</div>
+          <div class="summary">
+            Score final : <span class="summary-highlight">${score} / ${questions.length}</span>
+            (${percent} %)<br/>
+            ${appreciation}
+          </div>
+          <div class="controls" style="margin-top:16px;">
+            <div class="score">Tu peux recommencer pour t’améliorer.</div>
+            <button class="btn-primary" id="restartBtn">Recommencer le QCM</button>
+          </div>
+        </div>
+      `;
+      document.getElementById("restartBtn").addEventListener("click", () => {
+        currentIndex = 0;
+        score = 0;
+        renderQuestion();
+      });
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>
