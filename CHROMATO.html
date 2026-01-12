@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>QCM – Méthodes séparatives (Partiel)</title>
+  <style>
+    :root{--bg:#0b1020;--card:#121a33;--txt:#e9eefc;--muted:#aab6e8;--ok:#2ecc71;--bad:#ff5c7a;--warn:#f7c948;}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#0b1020,#070a14);color:var(--txt);}
+    header{padding:24px 16px;max-width:980px;margin:0 auto;}
+    h1{margin:0 0 6px;font-size:22px}
+    p{margin:0;color:var(--muted)}
+    main{max-width:980px;margin:0 auto;padding:0 16px 24px;}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0 18px;}
+    select,button,input[type="number"]{
+      background:var(--card);color:var(--txt);border:1px solid rgba(255,255,255,.14);
+      padding:10px 12px;border-radius:10px;font-size:14px
+    }
+    button{cursor:pointer}
+    button.primary{background:#1b2a55;border-color:rgba(255,255,255,.18)}
+    button:hover{filter:brightness(1.06)}
+    .grid{display:grid;grid-template-columns:1fr;gap:12px}
+    .card{background:rgba(18,26,51,.85);border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:14px}
+    .meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin-top:6px}
+    .tag{padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04)}
+    .qtitle{font-weight:650}
+    .choices{margin-top:10px;display:grid;gap:8px}
+    label.choice{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.03)}
+    label.choice:hover{background:rgba(255,255,255,.06)}
+    .choice input{margin-top:3px}
+    .explain{margin-top:10px;padding:10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.16);display:none}
+    .explain.show{display:block}
+    .result{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+    .pill{padding:6px 10px;border-radius:999px;font-weight:650;font-size:13px;border:1px solid rgba(255,255,255,.12)}
+    .pill.ok{background:rgba(46,204,113,.12);color:var(--ok);border-color:rgba(46,204,113,.28)}
+    .pill.bad{background:rgba(255,92,122,.12);color:var(--bad);border-color:rgba(255,92,122,.30)}
+    .pill.warn{background:rgba(247,201,72,.10);color:var(--warn);border-color:rgba(247,201,72,.22)}
+    .footer{color:var(--muted);font-size:12px;margin-top:18px;line-height:1.4}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:2px 6px;border:1px solid rgba(255,255,255,.14);border-radius:6px;background:rgba(255,255,255,.04)}
+    .two{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:900px){.two{grid-template-columns:1fr 1fr}}
+    .stats{display:flex;gap:10px;flex-wrap:wrap}
+  </style>
+</head>
+<body>
+<header>
+  <h1>QCM d’entraînement – Méthodes séparatives (Partiel)</h1>
+  <p>Thèmes: GPC/SEC, Chromatographie ionique, Fast LC/UPLC, Électrophorèse capillaire, étalonnages.</p>
+</header>
+
+<main>
+  <div class="toolbar card">
+    <div class="stats">
+      <span class="pill warn" id="statTotal">Questions: 0</span>
+      <span class="pill" id="statScore">Score: —</span>
+      <span class="pill" id="statTime">Temps: 00:00</span>
+    </div>
+
+    <div style="flex:1"></div>
+
+    <label>
+      Mode:
+      <select id="mode">
+        <option value="entrainement" selected>Entraînement (corrigé après validation)</option>
+        <option value="exam">Examen (corrigé à la fin)</option>
+      </select>
+    </label>
+
+    <label>
+      Filtre:
+      <select id="filter">
+        <option value="all" selected>Tous</option>
+        <option value="SEC/GPC">SEC/GPC</option>
+        <option value="CI">Chromatographie ionique</option>
+        <option value="UPLC">Fast LC / UPLC</option>
+        <option value="CE">Électrophorèse capillaire</option>
+        <option value="Etalonnage">Étalonnage / Quantification</option>
+      </select>
+    </label>
+
+    <label>
+      Nombre:
+      <input type="number" id="nq" min="5" max="40" value="20" style="width:88px" />
+    </label>
+
+    <button class="primary" id="btnStart">Générer</button>
+    <button id="btnSubmit">Valider</button>
+    <button id="btnReset">Réinitialiser</button>
+  </div>
+
+  <div id="quiz" class="grid"></div>
+
+  <div class="footer card">
+    <div><strong>Raccourcis</strong> : <span class="kbd">G</span> générer • <span class="kbd">V</span> valider • <span class="kbd">R</span> reset.</div>
+    <div style="margin-top:8px">
+      Conseils partiel : maîtrise des équations (<span class="kbd">Rs</span>, <span class="kbd">ΔP ∝ 1/dp²</span>, <span class="kbd">log(M)=a·Ve+b</span>, <span class="kbd">v=μE</span>),
+      rôle du suppresseur en CI, EOF en CE, ordre d’élution SEC.
+    </div>
+  </div>
+</main>
+
+<script>
+/* =========================
+   BANQUE DE QUESTIONS
+   ========================= */
+const QUESTIONS = [
+  // --- SEC / GPC ---
+  {
+    id: "gpc1",
+    topic: "SEC/GPC",
+    level: "Facile",
+    question: "En SEC/GPC, quel est l’ordre d’élution (du premier au dernier) ?",
+    choices: [
+      "Petites molécules → grosses molécules",
+      "Grosses molécules → petites molécules",
+      "Ordre aléatoire, dépend du détecteur",
+      "Dépend uniquement de la polarité"
+    ],
+    answer: 1,
+    explain: "En exclusion stérique, les grosses molécules n’entrent pas (ou peu) dans les pores → elles parcourent un chemin plus court et éludent en premier."
+  },
+  {
+    id: "gpc2",
+    topic: "SEC/GPC",
+    level: "Moyen",
+    question: "Quelle relation est classiquement utilisée pour l’étalonnage SEC/GPC (standards) ?",
+    choices: [
+      "M = a·Ve + b",
+      "log(M) = a·Ve + b",
+      "Ve = a·log(M)² + b",
+      "log(Ve) = a·M + b"
+    ],
+    answer: 1,
+    explain: "La courbe d’étalonnage est souvent quasi-linéaire: log(M) en fonction de Ve sur le domaine de fractionnement."
+  },
+  {
+    id: "gpc3",
+    topic: "SEC/GPC",
+    level: "Moyen",
+    question: "La SEC/GPC est dite « non interactive » car la séparation dépend principalement…",
+    choices: [
+      "de la charge des analytes",
+      "des interactions hydrophobes",
+      "de la taille hydrodynamique (accès aux pores)",
+      "du pH de la phase mobile"
+    ],
+    answer: 2,
+    explain: "Principe: perméation dans les pores. Les interactions chimiques doivent être minimisées (sinon ce n’est plus une SEC idéale)."
+  },
+  {
+    id: "gpc4",
+    topic: "SEC/GPC",
+    level: "Moyen",
+    question: "Quelle est la définition correcte de l’indice de polydispersité Ip ?",
+    choices: [
+      "Ip = Mn/Mw",
+      "Ip = Mw/Mn",
+      "Ip = log(Mw) − log(Mn)",
+      "Ip = (Mw + Mn)/2"
+    ],
+    answer: 1,
+    explain: "Ip = Mw/Mn. Plus Ip est grand, plus la distribution de masses est large."
+  },
+  {
+    id: "gpc5",
+    topic: "SEC/GPC",
+    level: "Difficile",
+    question: "Deux polymères de même masse molaire peuvent avoir des volumes d’élution différents en SEC car…",
+    choices: [
+      "le détecteur UV change la séparation",
+      "la taille hydrodynamique dépend de la conformation/ramification",
+      "la SEC sépare sur la polarité",
+      "la température ne joue jamais"
+    ],
+    answer: 1,
+    explain: "À masse égale, une macromolécule plus ramifiée est plus compacte → rayon hydrodynamique plus faible → Ve plus grand."
+  },
+
+  // --- Chromatographie ionique (CI) ---
+  {
+    id: "ci1",
+    topic: "CI",
+    level: "Facile",
+    question: "En chromatographie ionique (CI), la phase stationnaire est typiquement…",
+    choices: [
+      "une silice greffée C18 (phase inverse)",
+      "un échangeur d’ions (résine chargée)",
+      "un gel de polyacrylamide",
+      "une membrane semi-perméable"
+    ],
+    answer: 1,
+    explain: "La CI repose sur l’échange d’ions entre analytes et sites chargés de la résine/phase stationnaire."
+  },
+  {
+    id: "ci2",
+    topic: "CI",
+    level: "Moyen",
+    question: "Une résine échangeuse de cations porte le plus souvent des groupements…",
+    choices: [
+      "–NR4+",
+      "–SO3−",
+      "–COOH neutre",
+      "–Si–CH3"
+    ],
+    answer: 1,
+    explain: "Échangeur de cations : sites négatifs (ex. sulfonate –SO3−) retenant les cations."
+  },
+  {
+    id: "ci3",
+    topic: "CI",
+    level: "Moyen",
+    question: "Pourquoi utilise-t-on un suppresseur en CI conductimétrique ?",
+    choices: [
+      "Pour augmenter la viscosité de l’éluant",
+      "Pour diminuer la conductivité de fond de l’éluant et augmenter le rapport signal/bruit",
+      "Pour augmenter le débit sans pression",
+      "Pour rendre la résine plus hydrophobe"
+    ],
+    answer: 1,
+    explain: "Le suppresseur convertit l’éluant en espèces faiblement conductrices (ex. acide faible) et rend les analytes plus visibles en conductimétrie."
+  },
+  {
+    id: "ci4",
+    topic: "CI",
+    level: "Moyen",
+    question: "Sur une colonne échangeuse de cations, l’ordre de rétention attendu est généralement…",
+    choices: [
+      "Ca2+ < K+ < Na+",
+      "Na+ < K+ < Ca2+",
+      "K+ < Ca2+ < Na+",
+      "Na+ < Ca2+ < K+"
+    ],
+    answer: 1,
+    explain: "Charge/interaction: Ca2+ interagit plus fortement → élué en dernier. Entre Na+ et K+, K+ est souvent plus retenu."
+  },
+  {
+    id: "ci5",
+    topic: "CI",
+    level: "Difficile",
+    question: "Le facteur qui augmente la conductivité κ d’une solution (toutes choses égales par ailleurs) est…",
+    choices: [
+      "diminuer la concentration ionique",
+      "augmenter la concentration ionique",
+      "supprimer toutes les charges (z=0)",
+      "remplacer l’eau par un solvant apolaire sans ions"
+    ],
+    answer: 1,
+    explain: "κ augmente globalement avec la concentration d’ions et leur mobilité/valence."
+  },
+
+  // --- Fast LC / UPLC ---
+  {
+    id: "uplc1",
+    topic: "UPLC",
+    level: "Moyen",
+    question: "Quelle équation représente la dépendance clé de la pression avec la taille de particule en UPLC ?",
+    choices: [
+      "ΔP ∝ dp²",
+      "ΔP ∝ 1/dp²",
+      "ΔP ∝ 1/dp",
+      "ΔP ∝ log(dp)"
+    ],
+    answer: 1,
+    explain: "Plus dp diminue, plus la pression augmente fortement (≈ inverse du carré)."
+  },
+  {
+    id: "uplc2",
+    topic: "UPLC",
+    level: "Moyen",
+    question: "L’équation fondamentale de la résolution (élution isocratique) inclut N, k' et α. Laquelle est correcte ?",
+    choices: [
+      "Rs = (√N/4) · (k'/(1+k')) · (α−1)",
+      "Rs = (N/4) · (1+k') · (α+1)",
+      "Rs = (√N) · (1/k') · (α−1)",
+      "Rs = (N) · (k'/(1+k'))"
+    ],
+    answer: 0,
+    explain: "Forme standard: Rs = (√N/4)·(k'/(1+k'))·((α−1)/α) ; version simplifiée fréquente: (α−1)."
+  },
+  {
+    id: "uplc3",
+    topic: "UPLC",
+    level: "Moyen",
+    question: "À performance comparable, la stratégie « Fast LC » vise surtout à…",
+    choices: [
+      "augmenter la longueur de colonne et dp",
+      "réduire la longueur de colonne et dp pour garder N tout en diminuant le temps",
+      "utiliser uniquement des détecteurs plus sensibles",
+      "supprimer la phase stationnaire"
+    ],
+    answer: 1,
+    explain: "Colonnes plus courtes + particules plus petites → maintien de la résolution avec temps d’analyse réduit."
+  },
+  {
+    id: "uplc4",
+    topic: "UPLC",
+    level: "Difficile",
+    question: "En ultra-rapide, quel paramètre instrument peut dégrader la résolution via l’élargissement de bande ?",
+    choices: [
+      "le volume extra-colonne (ECV)",
+      "la masse molaire du solvant",
+      "la couleur de la colonne",
+      "le format du fichier de données"
+    ],
+    answer: 0,
+    explain: "ECV (tubulures, cellule, injecteur) devient critique quand les pics sont très étroits."
+  },
+  {
+    id: "uplc5",
+    topic: "UPLC",
+    level: "Facile",
+    question: "Calcul de résolution à partir des largeurs à la base : Rs = 2(t2−t1)/(w1+w2). Si t1=2,3 min, t2=2,8 min, w1=0,12 min, w2=0,14 min, Rs vaut…",
+    choices: [
+      "≈ 1,92",
+      "≈ 3,85",
+      "≈ 0,38",
+      "≈ 5,00"
+    ],
+    answer: 1,
+    explain: "Rs = 2(0,5)/(0,26)=1,0/0,26≈3,85."
+  },
+
+  // --- CE (électrophorèse capillaire) ---
+  {
+    id: "ce1",
+    topic: "CE",
+    level: "Facile",
+    question: "En électrophorèse capillaire, la vitesse de migration v d’un ion est :",
+    choices: [
+      "v = μc · E",
+      "v = D · E",
+      "v = Rs · E",
+      "v = N / E"
+    ],
+    answer: 0,
+    explain: "Relation de base: v = μc E."
+  },
+  {
+    id: "ce2",
+    topic: "CE",
+    level: "Moyen",
+    question: "L’EOF (flux électro-osmotique) provient principalement…",
+    choices: [
+      "de la diffusion longitudinale",
+      "de l’ionisation des silanols de la paroi (SiO−) et de la double couche",
+      "d’une pompe haute pression",
+      "d’un gradient de solvants organiques"
+    ],
+    answer: 1,
+    explain: "La paroi de silice se charge négativement (pH>~2,5) → double couche → migration du liquide vers la cathode."
+  },
+  {
+    id: "ce3",
+    topic: "CE",
+    level: "Moyen",
+    question: "Pour un analyte neutre en CE, son mouvement est principalement dû…",
+    choices: [
+      "à la mobilité électrophorétique",
+      "à l’EOF (μEOF)",
+      "à l’adsorption sur une phase stationnaire",
+      "à la volatilité"
+    ],
+    answer: 1,
+    explain: "Un neutre ne subit pas la force électrophorétique, mais est entraîné par le flux électro-osmotique."
+  },
+  {
+    id: "ce4",
+    topic: "CE",
+    level: "Difficile",
+    question: "Comment le pH influence-t-il l’EOF dans un capillaire de silice non traité ?",
+    choices: [
+      "EOF diminue quand le pH augmente",
+      "EOF augmente quand le pH augmente (plus de SiO−, |ζ| ↑)",
+      "EOF est indépendant du pH",
+      "EOF dépend seulement de la tension appliquée"
+    ],
+    answer: 1,
+    explain: "Plus le pH est élevé, plus les silanols sont déprotonés → potentiel ζ ↑ → EOF ↑ (à force ionique comparable)."
+  },
+  {
+    id: "ce5",
+    topic: "CE",
+    level: "Moyen",
+    question: "En CE, la mobilité apparente μapp s’écrit :",
+    choices: [
+      "μapp = μEOF + μep",
+      "μapp = μEOF − μep",
+      "μapp = μep / μEOF",
+      "μapp = μEOF · μep"
+    ],
+    answer: 0,
+    explain: "La migration observée est la somme vectorielle (signée) du flux EOF et de la mobilité électrophorétique."
+  },
+
+  // --- Étalonnage / quantification (partiel 2022-2023) ---
+  {
+    id: "eta1",
+    topic: "Etalonnage",
+    level: "Facile",
+    question: "En chromatographie, la méthode des ajouts dosés consiste à…",
+    choices: [
+      "doser sans étalon, uniquement par hauteur de pic",
+      "ajouter des quantités connues d’analyte à l’échantillon et extrapoler",
+      "changer de colonne jusqu’à séparation parfaite",
+      "injecter uniquement le blanc"
+    ],
+    answer: 1,
+    explain: "Ajouts dosés: on ajoute des quantités connues à la matrice réelle; extrapolation → concentration initiale."
+  },
+  {
+    id: "eta2",
+    topic: "Etalonnage",
+    level: "Moyen",
+    question: "Pourquoi utilise-t-on un étalon interne avant une extraction (SPE/LLE) ?",
+    choices: [
+      "Pour augmenter la viscosité de l’échantillon",
+      "Pour corriger les pertes et variations de préparation/injection",
+      "Pour empêcher l’EOF en CE",
+      "Pour rendre l’échantillon fluorescent"
+    ],
+    answer: 1,
+    explain: "L’étalon interne subit les mêmes pertes/variations que l’analyte → correction par rapport d’aires."
+  },
+  {
+    id: "eta3",
+    topic: "Etalonnage",
+    level: "Moyen",
+    question: "Facteur de réponse relatif (analyte / étalon interne) le plus classique :",
+    choices: [
+      "K = (A_std/A_analyte) · (m_analyte/m_std)",
+      "K = (A_analyte/A_std) · (m_std/m_analyte)",
+      "K = (m_analyte/m_std)²",
+      "K = log(A_analyte)"
+    ],
+    answer: 1,
+    explain: "Forme usuelle: K = (A_analyte/A_std) / (m_analyte/m_std) = (A_analyte/A_std)·(m_std/m_analyte)."
+  },
+  {
+    id: "eta4",
+    topic: "Etalonnage",
+    level: "Difficile",
+    question: "Avec étalon interne, si K≈1 et A_analyte/A_std = 2,0, alors m_analyte/m_std vaut environ…",
+    choices: [
+      "0,5",
+      "1,0",
+      "2,0",
+      "4,0"
+    ],
+    answer: 2,
+    explain: "Si K≈1, alors A_analyte/A_std ≈ m_analyte/m_std."
+  },
+  {
+    id: "eta5",
+    topic: "Etalonnage",
+    level: "Moyen",
+    question: "Sur une résine sulfonate (–SO3−), à pH 2 des acides aminés sont majoritairement…",
+    choices: [
+      "anions donc élués immédiatement",
+      "cations donc retenus",
+      "neutres donc immobiles",
+      "gaz donc non analysables"
+    ],
+    answer: 1,
+    explain: "À pH bas, les fonctions amines sont protonées → forme cationique → retenue par l’échangeur de cations."
+  }
+];
+
+/* =========================
+   OUTILS
+   ========================= */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function pad2(n){ return String(n).padStart(2,'0'); }
+
+let timer = null;
+let t0 = null;
+let currentSet = [];
+let submitted = false;
+
+const elQuiz = document.getElementById("quiz");
+const elMode = document.getElementById("mode");
+const elFilter = document.getElementById("filter");
+const elNQ = document.getElementById("nq");
+const elStatTotal = document.getElementById("statTotal");
+const elStatScore = document.getElementById("statScore");
+const elStatTime = document.getElementById("statTime");
+
+function startTimer(){
+  stopTimer();
+  t0 = Date.now();
+  timer = setInterval(()=>{
+    const dt = Math.floor((Date.now()-t0)/1000);
+    const mm = Math.floor(dt/60), ss = dt%60;
+    elStatTime.textContent = `Temps: ${pad2(mm)}:${pad2(ss)}`;
+  }, 250);
+}
+function stopTimer(){
+  if(timer){ clearInterval(timer); timer=null; }
+}
+
+function buildQuiz(){
+  const mode = elMode.value;
+  const filter = elFilter.value;
+  const n = Math.max(5, Math.min(40, parseInt(elNQ.value || "20",10)));
+
+  // Filtrer
+  let pool = QUESTIONS;
+  if(filter !== "all") pool = pool.filter(q => q.topic === filter);
+
+  // Si pas assez, on reprend tout
+  if(pool.length < n) pool = QUESTIONS;
+
+  // Tirage
+  currentSet = shuffle(pool).slice(0, n);
+
+  submitted = false;
+  elQuiz.innerHTML = "";
+  elStatTotal.textContent = `Questions: ${currentSet.length}`;
+  elStatScore.textContent = "Score: —";
+  elStatScore.className = "pill";
+  startTimer();
+
+  currentSet.forEach((q, idx)=>{
+    const card = document.createElement("section");
+    card.className = "card";
+    card.dataset.qid = q.id;
+
+    const title = document.createElement("div");
+    title.className = "qtitle";
+    title.textContent = `${idx+1}. ${q.question}`;
+    card.appendChild(title);
+
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.innerHTML = `<span class="tag">${q.topic}</span><span class="tag">${q.level}</span>`;
+    card.appendChild(meta);
+
+    const choices = document.createElement("div");
+    choices.className = "choices";
+
+    q.choices.forEach((c, ci)=>{
+      const lab = document.createElement("label");
+      lab.className = "choice";
+      lab.innerHTML = `
+        <input type="radio" name="q_${q.id}" value="${ci}" />
+        <div>${c}</div>
+      `;
+      choices.appendChild(lab);
+    });
+    card.appendChild(choices);
+
+    const explain = document.createElement("div");
+    explain.className = "explain";
+    explain.id = `exp_${q.id}`;
+    explain.innerHTML = `<strong>Correction :</strong> <span>${q.explain}</span>`;
+    card.appendChild(explain);
+
+    const result = document.createElement("div");
+    result.className = "result";
+    result.id = `res_${q.id}`;
+    card.appendChild(result);
+
+    elQuiz.appendChild(card);
+  });
+
+  // Scroll to quiz
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+function gradeQuiz(){
+  if(currentSet.length === 0) return;
+  if(submitted) return;
+  submitted = true;
+
+  const mode = elMode.value;
+  let correct = 0;
+  let answered = 0;
+
+  currentSet.forEach(q=>{
+    const sel = document.querySelector(`input[name="q_${q.id}"]:checked`);
+    const res = document.getElementById(`res_${q.id}`);
+    const exp = document.getElementById(`exp_${q.id}`);
+    res.innerHTML = "";
+
+    if(sel) answered++;
+
+    const selectedIndex = sel ? parseInt(sel.value,10) : null;
+    const isOk = (selectedIndex === q.answer);
+
+    // En mode entraînement : affiche correction question par question
+    if(mode === "entrainement"){
+      exp.classList.add("show");
+      if(sel){
+        if(isOk){
+          correct++;
+          res.innerHTML = `<span class="pill ok">✅ Correct</span>`;
+        }else{
+          res.innerHTML = `<span class="pill bad">❌ Faux</span><span class="pill warn">Bonne réponse : ${q.choices[q.answer]}</span>`;
+        }
+      }else{
+        res.innerHTML = `<span class="pill warn">⚠️ Non répondu</span><span class="pill warn">Bonne réponse : ${q.choices[q.answer]}</span>`;
+      }
+    }
+
+    // En mode examen : on n’affiche pas les corrections ici
+    if(mode === "exam"){
+      if(sel && isOk) correct++;
+    }
+  });
+
+  // En mode examen : afficher correction globale + possibilité d’afficher solutions
+  if(mode === "exam"){
+    // Révéler corrections après coup
+    currentSet.forEach(q=>{
+      const exp = document.getElementById(`exp_${q.id}`);
+      exp.classList.add("show");
+      const sel = document.querySelector(`input[name="q_${q.id}"]:checked`);
+      const res = document.getElementById(`res_${q.id}`);
+      const selectedIndex = sel ? parseInt(sel.value,10) : null;
+      const isOk = (selectedIndex === q.answer);
+      if(sel){
+        res.innerHTML = isOk
+          ? `<span class="pill ok">✅ Correct</span>`
+          : `<span class="pill bad">❌ Faux</span><span class="pill warn">Bonne réponse : ${q.choices[q.answer]}</span>`;
+      }else{
+        res.innerHTML = `<span class="pill warn">⚠️ Non répondu</span><span class="pill warn">Bonne réponse : ${q.choices[q.answer]}</span>`;
+      }
+    });
+  }
+
+  const scorePct = Math.round((correct/currentSet.length)*100);
+  elStatScore.textContent = `Score: ${correct}/${currentSet.length} (${scorePct}%)`;
+  elStatScore.className = "pill " + (scorePct>=70 ? "ok" : scorePct>=50 ? "warn" : "bad");
+
+  stopTimer();
+}
+
+function resetAll(){
+  stopTimer();
+  t0 = null;
+  submitted = false;
+  currentSet = [];
+  elQuiz.innerHTML = "";
+  elStatTotal.textContent = "Questions: 0";
+  elStatScore.textContent = "Score: —";
+  elStatScore.className = "pill";
+  elStatTime.textContent = "Temps: 00:00";
+}
+
+/* =========================
+   EVENTS
+   ========================= */
+document.getElementById("btnStart").addEventListener("click", buildQuiz);
+document.getElementById("btnSubmit").addEventListener("click", gradeQuiz);
+document.getElementById("btnReset").addEventListener("click", resetAll);
+
+document.addEventListener("keydown", (e)=>{
+  if(e.key.toLowerCase()==="g") buildQuiz();
+  if(e.key.toLowerCase()==="v") gradeQuiz();
+  if(e.key.toLowerCase()==="r") resetAll();
+});
+
+// Génération initiale
+buildQuiz();
+</script>
+</body>
+</html>
