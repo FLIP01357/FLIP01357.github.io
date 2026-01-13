@@ -1,701 +1,516 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>QCM Électrochimie – Entraînement</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>QCM – Méthodes séparatives (SEPARATIVE)</title>
   <style>
-    :root {
-      --primary: #1E88E5;
-      --primary-dark: #0D47A1;
-      --accent: #43A047;
-      --danger: #E53935;
-      --bg: #F5F7FB;
-      --card-bg: #FFFFFF;
-      --text-main: #111827;
-      --text-muted: #6B7280;
-      --border-radius: 12px;
-      --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.12);
+    :root{--bg:#0b1020;--card:#121a33;--txt:#e9eefc;--muted:#aab6e8;--ok:#2ecc71;--bad:#ff5c7a;--warn:#f7c948;}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#0b1020,#070a14);color:var(--txt);}
+    header{padding:24px 16px;max-width:980px;margin:0 auto;}
+    h1{margin:0 0 6px;font-size:22px}
+    p{margin:0;color:var(--muted)}
+    main{max-width:980px;margin:0 auto;padding:0 16px 24px;}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0 18px;}
+    select,button,input[type="number"]{
+      background:var(--card);color:var(--txt);border:1px solid rgba(255,255,255,.14);
+      padding:10px 12px;border-radius:10px;font-size:14px
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-      background: radial-gradient(circle at top, #e3f2fd, #f5f7fb);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    .app {
-      background: var(--card-bg);
-      border-radius: 20px;
-      box-shadow: var(--shadow-soft);
-      max-width: 900px;
-      width: 100%;
-      padding: 24px 24px 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    @media (min-width: 768px) {
-      .app {
-        padding: 28px 32px 32px;
-      }
-    }
-
-    .app-header {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .title-block {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .title {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--primary-dark);
-    }
-
-    .subtitle {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    .pill {
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      background: rgba(30, 136, 229, 0.08);
-      color: var(--primary-dark);
-    }
-
-    .progress-bar {
-      position: relative;
-      width: 100%;
-      height: 8px;
-      border-radius: 999px;
-      background: #e5e7eb;
-      overflow: hidden;
-      margin-top: 4px;
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--primary), #42a5f5);
-      border-radius: 999px;
-      transition: width 0.25s ease-out;
-    }
-
-    .question-card {
-      background: linear-gradient(135deg, #ffffff, #f3f8ff);
-      border-radius: var(--border-radius);
-      padding: 16px 18px;
-      border: 1px solid #e0e7ff;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .question-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .question-text {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--primary-dark);
-      margin-top: 4px;
-    }
-
-    .options {
-      display: grid;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .option {
-      border-radius: 999px;
-      border: 1px solid #e5e7eb;
-      padding: 9px 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #ffffff;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.18s ease-out;
-    }
-
-    .option-prefix {
-      width: 26px;
-      height: 26px;
-      border-radius: 999px;
-      border: 1px solid #cbd5f5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--primary-dark);
-      background: #eef2ff;
-      flex-shrink: 0;
-    }
-
-    .option:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
-      border-color: #bfdbfe;
-    }
-
-    .option.selected {
-      border-color: var(--primary);
-      background: #e3f2fd;
-    }
-
-    .option.correct {
-      border-color: var(--accent);
-      background: #e8f5e9;
-    }
-
-    .option.incorrect {
-      border-color: var(--danger);
-      background: #ffebee;
-    }
-
-    .feedback {
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-    }
-
-    .feedback.correct {
-      background: #e8f5e9;
-      color: #1b5e20;
-      border: 1px solid #a5d6a7;
-    }
-
-    .feedback.incorrect {
-      background: #ffebee;
-      color: #b71c1c;
-      border: 1px solid #ef9a9a;
-    }
-
-    .feedback-icon {
-      font-size: 1rem;
-      line-height: 1;
-      margin-top: 1px;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 12px;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .score {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    button {
-      border: none;
-      border-radius: 999px;
-      padding: 8px 16px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.18s ease-out;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-dark);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(25, 118, 210, 0.35);
-    }
-
-    .btn-secondary {
-      background: #e5e7eb;
-      color: #374151;
-    }
-
-    .btn-secondary:hover {
-      background: #d1d5db;
-    }
-
-    .summary {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid #e5e7eb;
-      font-size: 0.9rem;
-      color: var(--text-main);
-    }
-
-    .summary-highlight {
-      font-weight: 700;
-      color: var(--primary-dark);
-    }
+    button{cursor:pointer}
+    button.primary{background:#1b2a55;border-color:rgba(255,255,255,.18)}
+    button:hover{filter:brightness(1.06)}
+    .grid{display:grid;grid-template-columns:1fr;gap:12px}
+    .card{background:rgba(18,26,51,.85);border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:14px}
+    .meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin-top:6px}
+    .tag{padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04)}
+    .qtitle{font-weight:650}
+    .choices{margin-top:10px;display:grid;gap:8px}
+    label.choice{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.03)}
+    label.choice:hover{background:rgba(255,255,255,.06)}
+    .choice input{margin-top:3px}
+    .explain{margin-top:10px;padding:10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.16);display:none}
+    .explain.show{display:block}
+    .result{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+    .pill{padding:6px 10px;border-radius:999px;font-weight:650;font-size:13px;border:1px solid rgba(255,255,255,.12)}
+    .pill.ok{background:rgba(46,204,113,.12);color:var(--ok);border-color:rgba(46,204,113,.28)}
+    .pill.bad{background:rgba(255,92,122,.12);color:var(--bad);border-color:rgba(255,92,122,.30)}
+    .pill.warn{background:rgba(247,201,72,.10);color:var(--warn);border-color:rgba(247,201,72,.22)}
+    .footer{color:var(--muted);font-size:12px;margin-top:18px;line-height:1.4}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:2px 6px;border:1px solid rgba(255,255,255,.14);border-radius:6px;background:rgba(255,255,255,.04)}
+    .stats{display:flex;gap:10px;flex-wrap:wrap}
   </style>
 </head>
 <body>
-  <div class="app">
-    <div class="app-header">
-      <div class="title-block">
-        <div class="title">QCM Électrochimie</div>
-        <div class="subtitle">Cinétique, surtension, densité de courant, montages, domaine d’électroactivité</div>
-      </div>
-      <div class="pill">Mode entraînement</div>
+<header>
+  <h1>QCM d’entraînement – Méthodes séparatives (SEPARATIVE)</h1>
+  <p>60 questions : SEC/GPC, CI, HPTLC, HPLC dépannage, Fast LC/UPLC, CE, Quantification.</p>
+</header>
+
+<main>
+  <div class="toolbar card">
+    <div class="stats">
+      <span class="pill warn" id="statTotal">Questions: 0</span>
+      <span class="pill" id="statScore">Score: —</span>
+      <span class="pill" id="statTime">Temps: 00:00</span>
     </div>
 
-    <div class="progress-bar">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
+    <div style="flex:1"></div>
 
-    <div id="quizContainer">
-      <!-- Contenu injecté en JavaScript -->
-    </div>
+    <label>
+      Mode:
+      <select id="mode">
+        <option value="entrainement" selected>Entraînement (corrigé après validation)</option>
+        <option value="exam">Examen (corrigé à la fin)</option>
+      </select>
+    </label>
+
+    <label>
+      Filtre:
+      <select id="filter">
+        <option value="all" selected>Tous</option>
+        <option value="SEC/GPC">SEC/GPC</option>
+        <option value="CI">Chromatographie ionique</option>
+        <option value="HPTLC">HPTLC</option>
+        <option value="HPLC">HPLC (dépannage)</option>
+        <option value="UPLC">Fast LC / UPLC</option>
+        <option value="CE">Électrophorèse capillaire</option>
+        <option value="Quantif">Quantification</option>
+      </select>
+    </label>
+
+    <label>
+      Nombre:
+      <input type="number" id="nq" min="10" max="80" value="50" style="width:88px" />
+    </label>
+
+    <button class="primary" id="btnStart">Générer</button>
+    <button id="btnSubmit">Valider</button>
+    <button id="btnReset">Réinitialiser</button>
   </div>
 
-  <script>
-    const questions = [
-      {
-        text: "Le potentiel d’équilibre d’un couple redox dépend :",
-        options: [
-          "Uniquement de la température",
-          "Uniquement de la concentration en espèce oxydée",
-          "Du rapport [Ox]/[Red] selon la loi de Nernst",
-          "Ne dépend pas de la composition du milieu"
-        ],
-        correct: 2,
-        explanation:
-          "La loi de Nernst montre que E dépend du rapport a(Ox)/a(Red), donc des activités et indirectement des concentrations et de la force ionique."
-      },
-      {
-        text: "À l’équilibre électrochimique :",
-        options: [
-          "Le courant mesuré est nul mais les vitesses redox sont non nulles",
-          "Il n’y a aucun échange d’électrons à la surface",
-          "L’oxydation prédomine sur la réduction",
-          "La réduction prédomine sur l’oxydation"
-        ],
-        correct: 0,
-        explanation:
-          "À l’équilibre, v_ox = v_red, donc les flux s’annulent et le courant net est nul, mais les échanges microscopiques continuent."
-      },
-      {
-        text: "La surtension (η) correspond à :",
-        options: [
-          "E − Eeq",
-          "Eeq − E",
-          "La différence entre l’intensité anodique et cathodique",
-          "La variation du pH au voisinage de l’électrode"
-        ],
-        correct: 0,
-        explanation:
-          "Par définition, η = E − Eeq. Elle traduit l’écart entre le potentiel imposé et le potentiel d’équilibre."
-      },
-      {
-        text: "Une surtension anodique positive (η > 0) favorise :",
-        options: [
-          "La réduction",
-          "L’oxydation",
-          "La formation d’un précipité",
-          "Rien, η ne modifie pas le sens de réaction"
-        ],
-        correct: 1,
-        explanation:
-          "Une surtension positive rend l’électrode plus oxydante, ce qui favorise l’oxydation (retrait d’électrons au système)."
-      },
-      {
-        text: "La densité de courant d’échange j₀ représente :",
-        options: [
-          "Le courant global lorsqu’on impose une surtension",
-          "La vitesse d’équilibre d’un couple redox",
-          "Le courant nécessaire pour atteindre l’oxydation complète",
-          "Une grandeur purement théorique et inutile"
-        ],
-        correct: 1,
-        explanation:
-          "j₀ est la densité de courant correspondant à la vitesse d’échange au repos ; plus j₀ est grand, plus le système est cinétiquement rapide."
-      },
-      {
-        text: "Les systèmes rapides se caractérisent par :",
-        options: [
-          "Une densité de courant d’échange j₀ élevée",
-          "Une densité de courant d’échange j₀ très faible",
-          "Une forte hystérésis entre montée/descente de potentiel",
-          "Une absence d’oxydation possible"
-        ],
-        correct: 0,
-        explanation:
-          "Les systèmes rapides ont un j₀ élevé, donc une faible surtension suffit pour obtenir un courant significatif."
-      },
-      {
-        text: "Pour un système lent, on observe :",
-        options: [
-          "Oxydation et réduction simultanées",
-          "Une surtension minimale pour qu’un courant circule",
-          "Une absence totale de surtension",
-          "Un potentiel indépendant de la concentration"
-        ],
-        correct: 1,
-        explanation:
-          "Les systèmes lents nécessitent typiquement une surtension minimale anodique ou cathodique pour qu’une réaction démarre."
-      },
-      {
-        text: "Dans un système réversible (au sens électrochimique) :",
-        options: [
-          "L’interface se modifie irréversiblement",
-          "Les courbes i/E montante et descendante se superposent",
-          "Le potentiel dépend fortement du temps",
-          "La densité de courant ne peut pas être mesurée"
-        ],
-        correct: 1,
-        explanation:
-          "Un système réversible ne modifie pas durablement l’interface : la montée et la descente de potentiel donnent les mêmes courbes i/E."
-      },
-      {
-        text: "Dans un système irréversible :",
-        options: [
-          "La polarisation persiste même quand η redevient nul",
-          "Aucune oxydation n’est possible",
-          "Aucune surtension ne peut être définie",
-          "Le courant d’échange est infini"
-        ],
-        correct: 0,
-        explanation:
-          "L’interface est modifiée (oxyde, gaz…) et garde une polarisation résiduelle : c’est typique d’un comportement irréversible."
-      },
-      {
-        text: "Le système Fe³⁺/Fe²⁺ sur électrode de platine est :",
-        options: [
-          "Lent",
-          "Rapide",
-          "Toujours irréversible",
-          "Un système sans échange d’électrons"
-        ],
-        correct: 1,
-        explanation:
-          "Fe³⁺/Fe²⁺ sur Pt est l’exemple classique de système rapide avec courant d’échange élevé."
-      },
-      {
-        text: "Le couple H⁺/H₂ est :",
-        options: [
-          "Lent sur Hg et rapide sur Pt",
-          "Rapide sur Hg et lent sur Pt",
-          "Toujours lent",
-          "Toujours rapide"
-        ],
-        correct: 0,
-        explanation:
-          "H⁺/H₂ est très rapide sur Pt (très bon catalyseur) et très lent sur Hg."
-      },
-      {
-        text: "Le domaine d’électroactivité de l’eau (pH = 0) s’étend environ :",
-        options: [
-          "De −0,2 V à 1,8 V",
-          "De −2,0 V à 2,0 V",
-          "De 0 V à 1,23 V",
-          "De 1,8 V à 2,5 V"
-        ],
-        correct: 0,
-        explanation:
-          "Sur Pt à pH 0, la réduction de H⁺ commence vers −0,2 V/ECS, l’oxydation de l’eau vers +1,8 V/ECS → fenêtre ≈ 2 V."
-      },
-      {
-        text: "L’électrolyse de l’eau apparaît :",
-        options: [
-          "Lorsque E reste dans le domaine d’électroactivité",
-          "Lorsqu’on dépasse les murs du solvant",
-          "Uniquement si on utilise du mercure",
-          "Uniquement si la concentration en H⁺ est faible"
-        ],
-        correct: 1,
-        explanation:
-          "Quand on dépasse les potentiels limites, ce sont les réactions de l’eau (H₂ ou O₂) qui deviennent prédominantes."
-      },
-      {
-        text: "Dans un montage à 2 électrodes :",
-        options: [
-          "L’électrode de référence n’est traversée par aucun courant",
-          "L’électrode de référence se dégrade car un courant la traverse",
-          "Le potentiel de chaque électrode est connu séparément",
-          "On ne peut pas faire passer de courant"
-        ],
-        correct: 1,
-        explanation:
-          "Dans un vrai montage 2 électrodes, la “référence” supporte du courant et son potentiel dérive, d’où l’intérêt du montage 3 électrodes."
-      },
-      {
-        text: "Dans un montage à 3 électrodes :",
-        options: [
-          "L’électrode auxiliaire est inutile",
-          "L’électrode de référence maintient un potentiel constant sans courant",
-          "L’électrode de travail n’est pas traversée par du courant",
-          "L’électrode de référence supporte tout le courant"
-        ],
-        correct: 1,
-        explanation:
-          "L’électrode de référence ne doit quasiment pas voir de courant pour garder un potentiel stable. L’électrode auxiliaire gère la circulation du courant."
-      },
-      {
-        text: "En mode potentiostatique :",
-        options: [
-          "On impose i et on mesure E",
-          "On impose E et on mesure i",
-          "On impose uniquement η",
-          "Ni E ni i ne sont contrôlés"
-        ],
-        correct: 1,
-        explanation:
-          "Un potentiostat maintient le potentiel de l’électrode de travail ; l’intensité varie en conséquence."
-      },
-      {
-        text: "En mode galvanostatique :",
-        options: [
-          "On impose E et on mesure i",
-          "On impose i et on mesure E",
-          "On impose uniquement η",
-          "Ni E ni i ne sont contrôlés"
-        ],
-        correct: 1,
-        explanation:
-          "En galvanostatique, on impose un courant (densité de courant) et on observe comment le potentiel évolue."
-      },
-      {
-        text: "Sur la courbe i/E d’un mélange Fe²⁺/Fe³⁺ équimolaire :",
-        options: [
-          "Seule l’oxydation apparaît",
-          "Seule la réduction apparaît",
-          "Le courant total vaut 0 au potentiel d’équilibre",
-          "Oxydation et réduction sont impossibles"
-        ],
-        correct: 2,
-        explanation:
-          "À Eth, iox = −ired, donc la somme est nulle : i_total = 0, même si les flux microscopiques existent."
-      },
-      {
-        text: "Une surtension cathodique négative (η < 0) favorise :",
-        options: [
-          "L’oxydation",
-          "La réduction",
-          "La dissolution du métal",
-          "Aucune réaction"
-        ],
-        correct: 1,
-        explanation:
-          "Une surtension négative rend l’électrode plus réductrice, ce qui favorise la réduction (gain d’électrons par l’espèce en solution)."
-      },
-      {
-        text: "Lorsque l’on sort du domaine d’électroactivité de l’eau :",
-        options: [
-          "Seule la réaction d’intérêt continue",
-          "Ce sont les réactions de l’eau (H₂ ou O₂) qui dominent",
-          "La densité de courant d’échange devient nulle",
-          "La cellule ne conduit plus"
-        ],
-        correct: 1,
-        explanation:
-          "Au-delà des murs du solvant, l’eau est oxydée ou réduite en priorité, empêchant l’étude propre d’autres couples redox."
+  <div id="quiz" class="grid"></div>
+
+  <div class="footer card">
+    <div><strong>Raccourcis</strong> : <span class="kbd">G</span> générer • <span class="kbd">V</span> valider • <span class="kbd">R</span> reset.</div>
+    <div style="margin-top:8px">Mode examen : le corrigé n’apparaît qu’après validation.</div>
+  </div>
+</main>
+
+<script>
+const QUESTIONS = [
+  /* ================= SEC/GPC (12) ================= */
+  {id:"sg1",topic:"SEC/GPC",level:"Facile",
+   question:"En SEC, une molécule totalement exclue des pores élue près de :",
+   choices:["V0","Vt","Vp","Ve = 0"], answer:0,
+   explain:"Exclusion totale : parcours interstitiel uniquement → Ve ≈ V0."},
+  {id:"sg2",topic:"SEC/GPC",level:"Moyen",
+   question:"Le coefficient de distribution Kd en SEC est :",
+   choices:["(Ve−V0)/(Vt−V0)","(V0−Ve)/(Vt−V0)","Ve/V0","log(M)/Ve"], answer:0,
+   explain:"Kd=0 (exclusion) ; Kd=1 (inclusion totale)."},
+  {id:"sg3",topic:"SEC/GPC",level:"Moyen",
+   question:"Quel paramètre est le plus directement relié à la séparation SEC ?",
+   choices:["Rayon hydrodynamique","pKa","Polarité","Conductivité"], answer:0,
+   explain:"La séparation dépend de l’accès aux pores → taille hydrodynamique."},
+  {id:"sg4",topic:"SEC/GPC",level:"Moyen",
+   question:"Si des interactions analyte–gel existent en SEC, le résultat typique est :",
+   choices:["Ve augmente (rétention additionnelle)","Ve diminue toujours","ordre d’élution inchangé","pics deviennent infiniment étroits"], answer:0,
+   explain:"Adsorption/interaction ajoute de la rétention → Ve plus grand."},
+  {id:"sg5",topic:"SEC/GPC",level:"Moyen",
+   question:"Dans un étalonnage SEC standard, on utilise souvent :",
+   choices:["log(M)=a·Ve+b","M=a·Ve+b","Ve=a·M+b","log(Ve)=a·M+b"], answer:0,
+   explain:"Linéarité approximative de log(M) vs Ve sur le domaine de fractionnement."},
+  {id:"sg6",topic:"SEC/GPC",level:"Difficile",
+   question:"Pourquoi un étalonnage avec standards de chimie différente peut être faux ?",
+   choices:["Conformation différente → rayon différent à M identique","Le détecteur change M","Le débit devient nul","La pression devient négative"], answer:0,
+   explain:"SEC sépare sur taille, pas sur M absolue : conformation/solvant modifient le rayon."},
+  {id:"sg7",topic:"SEC/GPC",level:"Moyen",
+   question:"Pour améliorer la résolution en SEC, on peut :",
+   choices:["Augmenter N (colonne + longue / particules + fines)","Augmenter le pH au hasard","Ajouter un suppresseur","Diminuer la tension"], answer:0,
+   explain:"Comme en LC : efficacité N ↑ → pics plus fins → meilleure Rs."},
+  {id:"sg8",topic:"SEC/GPC",level:"Facile",
+   question:"En SEC, l’ordre d’élution correct est :",
+   choices:["Grandes molécules puis petites","Petites puis grandes","Dépend du détecteur","Dépend uniquement du pH"], answer:0,
+   explain:"Les grosses molécules accèdent moins aux pores → chemin plus court → d’abord."},
+  {id:"sg9",topic:"SEC/GPC",level:"Moyen",
+   question:"Une petite molécule totalement incluse élue près de :",
+   choices:["Vt","V0","Vm","Vp uniquement"], answer:0,
+   explain:"Inclusion totale : exploration du volume accessible → Ve ≈ Vt."},
+  {id:"sg10",topic:"SEC/GPC",level:"Moyen",
+   question:"Ip (indice de polydispersité) est :",
+   choices:["Mw/Mn","Mn/Mw","log(Mw)/log(Mn)","(Mw+Mn)/2"], answer:0,
+   explain:"Ip= Mw/Mn ; Ip≈1 : monodispersé."},
+  {id:"sg11",topic:"SEC/GPC",level:"Difficile",
+   question:"Si tu concatènes 2 colonnes SEC, l’effet principal est :",
+   choices:["N augmente → meilleure résolution, mais temps/ΔP augmentent","ΔP diminue toujours","Kd devient >1","l’ordre d’élution s’inverse"], answer:0,
+   explain:"Colonnes en série : longueur ↑ → N ↑ (mais ΔP et temps ↑)."},
+  {id:"sg12",topic:"SEC/GPC",level:"Moyen",
+   question:"Hors domaine de fractionnement d’une colonne SEC, on observe :",
+   choices:["Peu/pas de séparation (exclusion totale ou inclusion totale)","Séparation parfaite","EOF dominant","Suppression automatique du bruit"], answer:0,
+   explain:"Aux extrêmes Kd≈0 ou 1 → analytes coéluent."},
+
+  /* ================= CI (10) ================= */
+  {id:"ci1n",topic:"CI",level:"Facile",
+   question:"Une colonne échangeuse d’anions porte typiquement :",
+   choices:["des sites positifs (ex. NR4+)","des sites négatifs (SO3−)","C18","silice nue"], answer:0,
+   explain:"Échangeur d’anions : sites + retenant les anions."},
+  {id:"ci2n",topic:"CI",level:"Moyen",
+   question:"Augmenter la concentration de l’éluant (ions compétiteurs) en CI tend à :",
+   choices:["diminuer tR","augmenter tR","ne rien changer","inverser la charge"], answer:0,
+   explain:"Compétition ↑ → rétention ↓ → tR diminue."},
+  {id:"ci3n",topic:"CI",level:"Moyen",
+   question:"Le suppresseur en CI conductimétrique sert principalement à :",
+   choices:["réduire la conductivité de fond et augmenter S/B","augmenter la pression","rendre la résine hydrophobe","créer un gradient"], answer:0,
+   explain:"Fond plus faible → analytes plus visibles en conductimétrie."},
+  {id:"ci4n",topic:"CI",level:"Moyen",
+   question:"Une surcharge de colonne (CI) entraîne souvent :",
+   choices:["fronting et perte de résolution","pics plus étroits","ΔP = 0","signal constant parfait"], answer:0,
+   explain:"Saturation des sites d’échange → non-linéarité → fronting."},
+  {id:"ci5n",topic:"CI",level:"Moyen",
+   question:"En CI, la sélectivité dépend notamment de :",
+   choices:["la nature du site d’échange et du contre-ion de l’éluant","la lampe deutérium","la longueur d’onde UV uniquement","la taille de plaque"], answer:0,
+   explain:"Éluant + résine pilotent la sélectivité d’échange."},
+  {id:"ci6n",topic:"CI",level:"Difficile",
+   question:"Pourquoi contrôler la température en CI conductimétrique ?",
+   choices:["κ dépend fortement de T","les colonnes fondent à 30°C","EOF apparaît sinon","le pH devient constant"], answer:0,
+   explain:"Variation de T → variation κ → dérive/instabilité de ligne de base."},
+  {id:"ci7n",topic:"CI",level:"Moyen",
+   question:"Un gradient en CI est utile pour :",
+   choices:["éluer plus vite les ions fortement retenus","supprimer tous les ions","réduire dp","stocker l’échantillon"], answer:0,
+   explain:"Force d’élution ↑ au cours du temps → composés fortement retenus sortent."},
+  {id:"ci8n",topic:"CI",level:"Difficile",
+   question:"Un analyte à forte mobilité ionique donnera en conductimétrie un signal :",
+   choices:["plus élevé","plus faible","nul","indépendant de tout"], answer:0,
+   explain:"Contribution à κ augmente avec la mobilité (λ) à concentration donnée."},
+  {id:"ci9n",topic:"CI",level:"Moyen",
+   question:"La conductivité κ augmente si :",
+   choices:["la concentration ionique augmente","la concentration ionique diminue","z=0 pour tous","aucun ion présent"], answer:0,
+   explain:"κ est globalement proportionnelle au nombre d’ions et à leur mobilité."},
+  {id:"ci10n",topic:"CI",level:"Moyen",
+   question:"Avec une échangeuse de cations, l’ion généralement le plus retenu est :",
+   choices:["un ion divalent (ex. Ca2+)","un ion monovalent léger (ex. Li+)","un neutre","un gaz"], answer:0,
+   explain:"Charge ↑ → interaction électrostatique ↑ → rétention ↑."},
+
+  /* ================= HPTLC (8) ================= */
+  {id:"t1n",topic:"HPTLC",level:"Facile",
+   question:"Rf en HPTLC/TLC est :",
+   choices:["distance soluté / distance front solvant","distance front / distance soluté","tR/t0","Ve/V0"], answer:0,
+   explain:"Rf ∈ [0;1] : rapport de migration."},
+  {id:"t2n",topic:"HPTLC",level:"Moyen",
+   question:"En phase normale (silice), augmenter la polarité de l’éluant fait généralement :",
+   choices:["augmenter Rf","diminuer Rf","ne rien changer","inverser la charge"], answer:0,
+   explain:"Éluant plus fort sur silice → analytes montent plus → Rf ↑."},
+  {id:"t3n",topic:"HPTLC",level:"Moyen",
+   question:"Une bonne pratique pour reproductibilité HPTLC est :",
+   choices:["saturer la cuve en vapeurs d’éluant","ne jamais filtrer l’éluant","déposer très large","sécher en air humide"], answer:0,
+   explain:"Saturation limite évaporation différentielle et stabilise l’élution."},
+  {id:"t4n",topic:"HPTLC",level:"Moyen",
+   question:"Une tache qui « traîne » est souvent due à :",
+   choices:["surcharge / interactions fortes","EOF trop grand","pression excessive","détecteur HS"], answer:0,
+   explain:"Tailing en TLC : dépôt trop concentré, interactions, support actif."},
+  {id:"t5n",topic:"HPTLC",level:"Difficile",
+   question:"Si tous les composés ont Rf≈1 (tous en haut), tu dois :",
+   choices:["diminuer la polarité (force) de l’éluant","augmenter la polarité","augmenter la hauteur de cuve","ajouter NaOH"], answer:0,
+   explain:"Éluant trop fort → tout part en haut : diminuer sa force."},
+  {id:"t6n",topic:"HPTLC",level:"Moyen",
+   question:"La densitométrie HPTLC sert surtout à :",
+   choices:["quantifier (aire/intensité des bandes)","augmenter ΔP","changer k'","faire une électrophorèse"], answer:0,
+   explain:"Lecture optique des bandes → signal proportionnel (dans domaine linéaire)."},
+  {id:"t7n",topic:"HPTLC",level:"Moyen",
+   question:"HPTLC vs TLC classique :",
+   choices:["couche plus homogène + particules plus fines → meilleure efficacité","nécessite 400 bar","utilise capillaire","fonctionne sans éluant"], answer:0,
+   explain:"HPTLC améliore répétabilité et résolution."},
+  {id:"t8n",topic:"HPTLC",level:"Difficile",
+   question:"Si l’éluant migre de travers (front irrégulier), une cause probable est :",
+   choices:["plaque inclinée / cuve non horizontale / saturation insuffisante","EOF inversé","suppresseur absent","détecteur UV sale"], answer:0,
+   explain:"En TLC/HPTLC, géométrie et saturation contrôlent la régularité du front."},
+
+  /* ================= HPLC dépannage (10) ================= */
+  {id:"h1n",topic:"HPLC",level:"Moyen",
+   question:"Une hausse progressive de pression au fil des jours en HPLC suggère :",
+   choices:["encrassement/colmatage progressif (filtration insuffisante)","lampe UV trop neuve","EOF","gradient parfait"], answer:0,
+   explain:"Particules/contaminants s’accumulent → ΔP augmente progressivement."},
+  {id:"h2n",topic:"HPLC",level:"Moyen",
+   question:"Une baisse soudaine de pression indique souvent :",
+   choices:["fuite ou désamorçage / bulle","colmatage","colonne plus longue","dp plus petit"], answer:0,
+   explain:"Fuite/désamorçage → perte de charge → ΔP chute."},
+  {id:"h3n",topic:"HPLC",level:"Moyen",
+   question:"Un bruit UV élevé peut venir de :",
+   choices:["bulles (dégazage), cellule sale, solvants impurs","résine sulfonate","pHi","V0"], answer:0,
+   explain:"Bulles + contaminants → fluctuations d’absorbance."},
+  {id:"h4n",topic:"HPLC",level:"Moyen",
+   question:"Un pic « split » (double) est souvent causé par :",
+   choices:["mauvais mélange/solvant, injection/loop, non-équilibrage","taille dp","EOF","HPTLC"], answer:0,
+   explain:"Problèmes d’injection, incompatibilité solvant échantillon/phase mobile, mélange incomplet."},
+  {id:"h5n",topic:"HPLC",level:"Moyen",
+   question:"Un tailing important peut être réduit en phase inverse en :",
+   choices:["ajustant pH (ionisation), utilisant additif/masquage silanols, évitant surcharge","augmentant ECV","diminuant le temps","augmentant Rf"], answer:0,
+   explain:"pH + sites silanols + surcharge sont causes typiques de tailing."},
+  {id:"h6n",topic:"HPLC",level:"Difficile",
+   question:"En gradient, un « gradient delay volume » trop grand provoque :",
+   choices:["décalage des tR vers le tard (gradient arrive plus tard à la colonne)","augmentation de Mn","EOF","Rf≈0"], answer:0,
+   explain:"Le mélangeur/tubulures retardent la composition effective à la colonne."},
+  {id:"h7n",topic:"HPLC",level:"Moyen",
+   question:"Des « ghost peaks » proviennent souvent de :",
+   choices:["contamination (solvants/flacons), mémoire système, additifs","colonne trop neuve","EOF négatif","silice dissoute"], answer:0,
+   explain:"Pistes : solvants, joints, flacons, contamination croisée."},
+  {id:"h8n",topic:"HPLC",level:"Moyen",
+   question:"Un temps de rétention qui diminue sans changement de méthode peut venir de :",
+   choices:["débit réel ↑, température ↑, composition plus forte (organiques ↑)","colmatage","dp ↑","ECV ↑ uniquement"], answer:0,
+   explain:"tR diminue si force d’élution ↑ ou débit/Température ↑."},
+  {id:"h9n",topic:"HPLC",level:"Difficile",
+   question:"Précipitation en présence d’ACN + tampon salin entraîne typiquement :",
+   choices:["colmatage → ΔP ↑","ΔP ↓","EOF ↑","aucun effet"], answer:0,
+   explain:"Sels peu solubles en % organique élevé → dépôts → colmatage."},
+  {id:"h10n",topic:"HPLC",level:"Moyen",
+   question:"Une fuite au raccord se traduit le plus souvent par :",
+   choices:["ΔP ↓ + tR instables","ΔP ↑ + pics plus fins","Rs ↑ automatiquement","aucune conséquence"], answer:0,
+   explain:"Fuite → débit effectif altéré → instabilité des rétentions."},
+
+  /* ================= UPLC / Fast LC (8) ================= */
+  {id:"u1n",topic:"UPLC",level:"Moyen",
+   question:"ΔP varie approximativement comme :",
+   choices:["1/dp²","dp²","log(dp)","indépendant de dp"], answer:0,
+   explain:"Particules plus petites → pression augmente ~ inverse du carré."},
+  {id:"u2n",topic:"UPLC",level:"Moyen",
+   question:"Pourquoi minimiser l’ECV en UPLC ?",
+   choices:["éviter dispersion extra-colonne (pics élargis)","augmenter le Rf","réduire Kd","augmenter la charge"], answer:0,
+   explain:"Pics étroits → ECV devient critique pour Rs."},
+  {id:"u3n",topic:"UPLC",level:"Moyen",
+   question:"La résolution (simplifiée) dépend de √N, k'/(1+k') et (α−1). Donc augmenter N :",
+   choices:["augmente Rs","diminue Rs","ne change rien","inverse l’ordre d’élution"], answer:0,
+   explain:"Rs ∝ √N : N ↑ → Rs ↑."},
+  {id:"u4n",topic:"UPLC",level:"Difficile",
+   question:"Pour échantillonner correctement un pic très étroit, il faut typiquement :",
+   choices:["≥ 9–10 points par pic","1 point","2 points","1000 points minimum"], answer:0,
+   explain:"Règle pratique : ~10 points/pic pour forme fiable."},
+  {id:"u5n",topic:"UPLC",level:"Moyen",
+   question:"Passer de 150 mm à 50 mm à vitesse linéaire constante fait le temps d’analyse ~",
+   choices:["÷3","×3","inchangé","÷2"], answer:0,
+   explain:"Temps ∝ L : 50/150 = 1/3."},
+  {id:"u6n",topic:"UPLC",level:"Moyen",
+   question:"Si k'≈0 en LC, la séparation est souvent :",
+   choices:["faible (composés peu retenus)","excellente","indépendante de N","meilleure en augmentant ECV"], answer:0,
+   explain:"k'/(1+k') → 0 si k'→0 : manque de rétention → coélution."},
+  {id:"u7n",topic:"UPLC",level:"Difficile",
+   question:"Une grande cellule UV en UPLC provoque :",
+   choices:["élargissement des pics (dispersion)","baisse de dp","EOF","Kd>1"], answer:0,
+   explain:"Volume de cellule = ECV → dispersion."},
+  {id:"u8n",topic:"UPLC",level:"Moyen",
+   question:"UPLC permet surtout :",
+   choices:["analyses plus rapides et plus efficaces (mais pression ↑)","supprimer la pression","séparer uniquement des neutres","remplacer la phase mobile"], answer:0,
+   explain:"Particules fines + colonnes courtes → rapide + performant."},
+
+  /* ================= CE (8) ================= */
+  {id:"c1n",topic:"CE",level:"Moyen",
+   question:"Le champ électrique E s’exprime par :",
+   choices:["E=V/L","E=L/V","E=V·L","E=μ·V"], answer:0,
+   explain:"Champ uniforme : E = V/L."},
+  {id:"c2n",topic:"CE",level:"Moyen",
+   question:"μep augmente si :",
+   choices:["|q| ↑ et η ↓","η ↑","|q| ↓","E ↓"], answer:0,
+   explain:"Mobilité ~ charge / friction (viscosité, taille)."},
+  {id:"c3n",topic:"CE",level:"Moyen",
+   question:"Une forte force ionique du tampon a souvent pour effet sur l’EOF :",
+   choices:["EOF diminue (double couche comprimée)","EOF augmente toujours","EOF devient indépendant du pH","EOF s’inverse"], answer:0,
+   explain:"Force ionique ↑ → couche diffuse plus mince → EOF ↓."},
+  {id:"c4n",topic:"CE",level:"Moyen",
+   question:"La fenêtre UV en CE correspond à :",
+   choices:["zone sans polyimide servant de cellule optique","lampe à flamme","suppresseur","résine"], answer:0,
+   explain:"On retire le revêtement pour laisser passer la lumière."},
+  {id:"c5n",topic:"CE",level:"Difficile",
+   question:"Pourquoi l’injection électrocinétique peut biaiser la composition injectée ?",
+   choices:["elle favorise les espèces plus mobiles/chargées","elle injecte un volume fixe parfait","elle supprime l’EOF","elle neutralise les analytes"], answer:0,
+   explain:"Les espèces à plus grande mobilité entrent préférentiellement."},
+  {id:"c6n",topic:"CE",level:"Moyen",
+   question:"Dans un capillaire de silice non traité (pH>~2,5), la paroi est négative car :",
+   choices:["SiOH → SiO− (déprotonation)","adsorption de Cl−","formation de SO3−","réaction avec ACN"], answer:0,
+   explain:"Ionisation des silanols."},
+  {id:"c7n",topic:"CE",level:"Moyen",
+   question:"La thermostatisation en CE sert surtout à :",
+   choices:["stabiliser viscosité/EOF et donc tm","augmenter dp","supprimer UV","rendre tous les analytes neutres"], answer:0,
+   explain:"T influence η et EOF → tm ; T stable = meilleure répétabilité."},
+  {id:"c8n",topic:"CE",level:"Moyen",
+   question:"Pour un analyte neutre en CE, le déplacement est principalement dû à :",
+   choices:["EOF","μep","une phase stationnaire","une pompe"], answer:0,
+   explain:"Neutre : pas de force électrophorétique, mais entraînement par EOF."},
+
+  /* ================= Quantification (4) ================= */
+  {id:"q1n",topic:"Quantif",level:"Moyen",
+   question:"En ajouts dosés (signal vs concentration ajoutée), C0 se déduit par :",
+   choices:["abscisse à l’origine (extrapolation à signal=0)","ordonnée à l’origine","pente seule","Rf"], answer:0,
+   explain:"L’interception en x vaut −C0 → donc C0."},
+  {id:"q2n",topic:"Quantif",level:"Moyen",
+   question:"Un détecteur saturé provoque le plus souvent :",
+   choices:["sous-estimation (réponse plafonnée)","sur-estimation","aucune erreur","EOF ↑"], answer:0,
+   explain:"La réponse n’augmente plus proportionnellement → aire trop faible."},
+  {id:"q3n",topic:"Quantif",level:"Moyen",
+   question:"Un bon étalon interne doit être :",
+   choices:["proche chimiquement, absent de l’échantillon, séparé et stable","très différent, coéluant, réactif","toujours plus retenu que tout","volatil"], answer:0,
+   explain:"Il doit corriger la préparation sans interférer."},
+  {id:"q4n",topic:"Quantif",level:"Facile",
+   question:"En étalon interne, si K≈1 alors :",
+   choices:["A_A/A_IS ≈ m_A/m_IS","A_A/A_IS ≈ m_IS/m_A","A_A=0","m_A inconnu par principe"], answer:0,
+   explain:"Réponse relative ≈1 → rapport d’aires ~ rapport de masses."}
+];
+
+/* ======== utilitaires ======== */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function pad2(n){ return String(n).padStart(2,'0'); }
+
+let timer=null, t0=null, currentSet=[], submitted=false;
+
+const elQuiz=document.getElementById("quiz");
+const elMode=document.getElementById("mode");
+const elFilter=document.getElementById("filter");
+const elNQ=document.getElementById("nq");
+const elStatTotal=document.getElementById("statTotal");
+const elStatScore=document.getElementById("statScore");
+const elStatTime=document.getElementById("statTime");
+
+function startTimer(){
+  stopTimer();
+  t0=Date.now();
+  timer=setInterval(()=>{
+    const dt=Math.floor((Date.now()-t0)/1000);
+    elStatTime.textContent=`Temps: ${pad2(Math.floor(dt/60))}:${pad2(dt%60)}`;
+  },250);
+}
+function stopTimer(){ if(timer){clearInterval(timer);timer=null;} }
+
+function buildQuiz(){
+  const filter=elFilter.value;
+  const n=Math.max(10,Math.min(80,parseInt(elNQ.value||"50",10)));
+  let pool=QUESTIONS;
+  if(filter!=="all") pool=pool.filter(q=>q.topic===filter);
+  if(pool.length<n) pool=QUESTIONS;
+
+  currentSet=shuffle(pool).slice(0,n);
+  submitted=false;
+  elQuiz.innerHTML="";
+  elStatTotal.textContent=`Questions: ${currentSet.length}`;
+  elStatScore.textContent="Score: —";
+  elStatScore.className="pill";
+  startTimer();
+
+  currentSet.forEach((q,idx)=>{
+    const card=document.createElement("section");
+    card.className="card";
+    card.dataset.qid=q.id;
+
+    const title=document.createElement("div");
+    title.className="qtitle";
+    title.textContent=`${idx+1}. ${q.question}`;
+    card.appendChild(title);
+
+    const meta=document.createElement("div");
+    meta.className="meta";
+    meta.innerHTML=`<span class="tag">${q.topic}</span><span class="tag">${q.level}</span>`;
+    card.appendChild(meta);
+
+    const choices=document.createElement("div");
+    choices.className="choices";
+    q.choices.forEach((c,ci)=>{
+      const lab=document.createElement("label");
+      lab.className="choice";
+      lab.innerHTML=`<input type="radio" name="q_${q.id}" value="${ci}" /><div>${c}</div>`;
+      choices.appendChild(lab);
+    });
+    card.appendChild(choices);
+
+    const explain=document.createElement("div");
+    explain.className="explain";
+    explain.id=`exp_${q.id}`;
+    explain.innerHTML=`<strong>Correction :</strong> <span>${q.explain}</span>`;
+    card.appendChild(explain);
+
+    const result=document.createElement("div");
+    result.className="result";
+    result.id=`res_${q.id}`;
+    card.appendChild(result);
+
+    elQuiz.appendChild(card);
+  });
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function gradeQuiz(){
+  if(currentSet.length===0 || submitted) return;
+  submitted=true;
+  const mode=elMode.value;
+  let correct=0;
+
+  currentSet.forEach(q=>{
+    const sel=document.querySelector(`input[name="q_${q.id}"]:checked`);
+    const res=document.getElementById(`res_${q.id}`);
+    const exp=document.getElementById(`exp_${q.id}`);
+    res.innerHTML="";
+    const selected=sel?parseInt(sel.value,10):null;
+    const ok=(selected===q.answer);
+
+    if(mode==="entrainement"){
+      exp.classList.add("show");
+      if(sel){
+        if(ok){ correct++; res.innerHTML=`<span class="pill ok">✅ Correct</span>`; }
+        else{ res.innerHTML=`<span class="pill bad">❌ Faux</span><span class="pill warn">Bonne réponse : ${q.choices[q.answer]}</span>`; }
+      }else{
+        res.innerHTML=`<span class="pill warn">⚠️ Non répondu</span><span class="pill warn">Bonne réponse : ${q.choices[q.answer]}</span>`;
       }
-    ];
-
-    let currentIndex = 0;
-    let score = 0;
-    let answered = false;
-
-    const quizContainer = document.getElementById("quizContainer");
-    const progressFill = document.getElementById("progressFill");
-
-    function renderQuestion() {
-      const q = questions[currentIndex];
-      answered = false;
-
-      const percent = ((currentIndex) / questions.length) * 100;
-      progressFill.style.width = `${percent}%`;
-
-      quizContainer.innerHTML = `
-        <div class="question-card">
-          <div class="question-meta">
-            <span>Question ${currentIndex + 1} / ${questions.length}</span>
-            <span>Niveau : IUT / licence</span>
-          </div>
-          <div class="question-text">${q.text}</div>
-          <div class="options">
-            ${q.options
-              .map(
-                (opt, i) => `
-              <button class="option" data-index="${i}">
-                <span class="option-prefix">${String.fromCharCode(65 + i)}</span>
-                <span>${opt}</span>
-              </button>
-            `
-              )
-              .join("")}
-          </div>
-          <div id="feedback"></div>
-          <div class="controls">
-            <div class="score">
-              Score actuel : <strong>${score}</strong> / ${questions.length}
-            </div>
-            <div>
-              <button class="btn-secondary" id="resetBtn">Réinitialiser</button>
-              <button class="btn-primary" id="nextBtn">
-                ${currentIndex === questions.length - 1 ? "Voir le bilan" : "Question suivante"}
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-
-      document.querySelectorAll(".option").forEach((btn) => {
-        btn.addEventListener("click", onOptionClick);
-      });
-
-      document.getElementById("nextBtn").addEventListener("click", onNext);
-      document.getElementById("resetBtn").addEventListener("click", onReset);
+    }else{
+      if(sel && ok) correct++;
     }
+  });
 
-    function onOptionClick(e) {
-      if (answered) return;
-      const btn = e.currentTarget;
-      const selectedIndex = parseInt(btn.getAttribute("data-index"));
-      const q = questions[currentIndex];
-      const feedbackDiv = document.getElementById("feedback");
-      const optionButtons = document.querySelectorAll(".option");
-
-      answered = true;
-
-      optionButtons.forEach((b) => b.classList.remove("selected", "correct", "incorrect"));
-      btn.classList.add("selected");
-
-      if (selectedIndex === q.correct) {
-        score++;
-        btn.classList.add("correct");
-        feedbackDiv.innerHTML = `
-          <div class="feedback correct">
-            <div class="feedback-icon">✔</div>
-            <div>
-              <strong>Correct !</strong><br/>
-              ${q.explanation}
-            </div>
-          </div>
-        `;
-      } else {
-        btn.classList.add("incorrect");
-        optionButtons[q.correct].classList.add("correct");
-        feedbackDiv.innerHTML = `
-          <div class="feedback incorrect">
-            <div class="feedback-icon">✖</div>
-            <div>
-              <strong>Incorrect.</strong><br/>
-              ${q.explanation}
-            </div>
-          </div>
-        `;
+  if(mode==="exam"){
+    currentSet.forEach(q=>{
+      const sel=document.querySelector(`input[name="q_${q.id}"]:checked`);
+      const res=document.getElementById(`res_${q.id}`);
+      const exp=document.getElementById(`exp_${q.id}`);
+      exp.classList.add("show");
+      const selected=sel?parseInt(sel.value,10):null;
+      const ok=(selected===q.answer);
+      if(sel){
+        res.innerHTML = ok
+          ? `<span class="pill ok">✅ Correct</span>`
+          : `<span class="pill bad">❌ Faux</span><span class="pill warn">Bonne réponse : ${q.choices[q.answer]}</span>`;
+      }else{
+        res.innerHTML=`<span class="pill warn">⚠️ Non répondu</span><span class="pill warn">Bonne réponse : ${q.choices[q.answer]}</span>`;
       }
+    });
+  }
 
-      // Mise à jour du score affiché
-      document.querySelector(".score").innerHTML =
-        'Score actuel : <strong>' + score + "</strong> / " + questions.length;
-    }
+  const pct=Math.round((correct/currentSet.length)*100);
+  elStatScore.textContent=`Score: ${correct}/${currentSet.length} (${pct}%)`;
+  elStatScore.className="pill "+(pct>=70?"ok":pct>=50?"warn":"bad");
+  stopTimer();
+}
 
-    function onNext() {
-      if (!answered && currentIndex < questions.length) {
-        // Optionnel : obliger à répondre avant de continuer
-        alert("Réponds d’abord à la question 🙂");
-        return;
-      }
+function resetAll(){
+  stopTimer(); t0=null; submitted=false; currentSet=[];
+  elQuiz.innerHTML="";
+  elStatTotal.textContent="Questions: 0";
+  elStatScore.textContent="Score: —";
+  elStatScore.className="pill";
+  elStatTime.textContent="Temps: 00:00";
+}
 
-      if (currentIndex < questions.length - 1) {
-        currentIndex++;
-        renderQuestion();
-      } else {
-        showSummary();
-      }
-    }
-
-    function onReset() {
-      if (!confirm("Réinitialiser le QCM et recommencer depuis le début ?")) return;
-      currentIndex = 0;
-      score = 0;
-      renderQuestion();
-    }
-
-    function showSummary() {
-      progressFill.style.width = "100%";
-      const percent = Math.round((score / questions.length) * 100);
-
-      let appreciation = "Bon début, revois les notions clés.";
-      if (percent >= 80) appreciation = "Excellent, tu maîtrises très bien le chapitre ✅";
-      else if (percent >= 60) appreciation = "Pas mal, quelques points à consolider 💪";
-      else if (percent >= 40) appreciation = "Encore du travail, mais tu es sur la bonne voie 📚";
-
-      quizContainer.innerHTML = `
-        <div class="question-card">
-          <div class="question-text">Bilan de ton QCM</div>
-          <div class="summary">
-            Score final : <span class="summary-highlight">${score} / ${
-        questions.length
-      }</span> (${percent} %)<br/>
-            ${appreciation}
-          </div>
-          <div class="controls" style="margin-top:16px;">
-            <div class="score">Tu peux recommencer pour t’améliorer.</div>
-            <button class="btn-primary" id="restartBtn">Recommencer le QCM</button>
-          </div>
-        </div>
-      `;
-
-      document.getElementById("restartBtn").addEventListener("click", () => {
-        currentIndex = 0;
-        score = 0;
-        renderQuestion();
-      });
-    }
-
-    // Initialisation
-    renderQuestion();
-  </script>
+document.getElementById("btnStart").addEventListener("click", buildQuiz);
+document.getElementById("btnSubmit").addEventListener("click", gradeQuiz);
+document.getElementById("btnReset").addEventListener("click", resetAll);
+document.addEventListener("keydown",(e)=>{
+  const k=e.key.toLowerCase();
+  if(k==="g") buildQuiz();
+  if(k==="v") gradeQuiz();
+  if(k==="r") resetAll();
+});
+buildQuiz();
+</script>
 </body>
 </html>
